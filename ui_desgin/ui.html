@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EdgeLink · IoT 管理平台</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #f0f2f8;
+    --surface:   #ffffff;
+    --surface-2: #f8f9fc;
+    --border:    #e4e9f4;
+    --accent:    #2563eb;
+    --accent-lt: #eff4ff;
+    --green:     #16a34a;
+    --green-bg:  #f0fdf4;
+    --red:       #dc2626;
+    --red-bg:    #fef2f2;
+    --amber:     #d97706;
+    --amber-bg:  #fffbeb;
+    --t1:        #0f172a;
+    --t2:        #4b5675;
+    --t3:        #9aa5be;
+    --sh-xs:  0 1px 3px rgba(0,0,0,.06);
+    --sh-sm:  0 2px 10px rgba(0,0,0,.07);
+    --sh-md:  0 4px 20px rgba(0,0,0,.09);
+    --r:    12px;
+    --r-sm:  8px;
+    --font-d: 'Rajdhani', sans-serif;
+    --font-b: 'Noto Sans SC', sans-serif;
+    --font-m: 'JetBrains Mono', monospace;
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: var(--font-b);
+    background: var(--bg);
+    color: var(--t1);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ═══════════════════════════ HEADER ═══════════════════════════ */
+  .hdr {
+    height: 56px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--sh-xs);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 22px;
+    flex-shrink: 0;
+    z-index: 20;
+    position: relative;
+  }
+
+  .logo { display:flex; align-items:center; gap:10px; }
+
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);
+    border-radius: 9px;
+    display: flex; align-items:center; justify-content:center;
+    box-shadow: 0 3px 10px rgba(37,99,235,.28);
+    flex-shrink: 0;
+  }
+  .logo-mark svg { width:17px; height:17px; }
+
+  .logo-name {
+    font-family: var(--font-d);
+    font-size: 20px; font-weight: 700;
+    letter-spacing: 2.5px; color: var(--t1);
+  }
+  .logo-name em { color: var(--accent); font-style:normal; }
+  .logo-tag { font-size: 10px; color: var(--t3); letter-spacing:.5px; margin-top:2px; }
+
+  .hdr-right { display:flex; align-items:center; gap:6px; }
+
+  .hdr-btn {
+    width:32px; height:32px;
+    border:1px solid var(--border); border-radius:var(--r-sm);
+    background:transparent; color:var(--t2);
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:all .18s; position:relative;
+  }
+  .hdr-btn:hover { background:var(--accent-lt); border-color:var(--accent); color:var(--accent); }
+  .hdr-btn .dot {
+    position:absolute; top:6px; right:6px;
+    width:6px; height:6px; border-radius:50%;
+    background:var(--red); border:1.5px solid var(--surface);
+  }
+
+  .hdr-sep { width:1px; height:22px; background:var(--border); margin:0 4px; }
+
+  .user-chip {
+    display:flex; align-items:center; gap:8px;
+    padding:3px 8px 3px 3px;
+    border-radius:var(--r-sm); cursor:pointer;
+    transition:background .18s;
+  }
+  .user-chip:hover { background:var(--surface-2); }
+
+  .avatar {
+    width:28px; height:28px; border-radius:7px;
+    background:linear-gradient(135deg,#2563eb,#60a5fa);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-d); font-size:12px; font-weight:700; color:#fff; letter-spacing:1px;
+  }
+  .user-name { font-size:13px; font-weight:500; color:var(--t1); }
+
+  /* ═══════════════════════════ LAYOUT ═══════════════════════════ */
+  .layout { display:flex; flex:1; overflow:hidden; }
+
+  /* ═══════════════════════════ SIDEBAR ═══════════════════════════ */
+  .sidebar {
+    width: 206px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    box-shadow: var(--sh-xs);
+    display: flex; flex-direction:column;
+    flex-shrink: 0;
+    padding: 14px 0 12px;
+    z-index: 10;
+  }
+
+  .nav-section { margin-bottom: 2px; }
+
+  .nav-label {
+    font-size: 10px; font-weight:600;
+    letter-spacing:1.2px; text-transform:uppercase;
+    color: var(--t3); padding: 8px 18px 4px;
+  }
+
+  .nav-item {
+    display:flex; align-items:center; gap:9px;
+    padding:8px 10px 8px 18px;
+    margin:0 8px; border-radius:var(--r-sm);
+    cursor:pointer; font-size:13.5px; color:var(--t2);
+    transition:all .15s;
+  }
+  .nav-item:hover { background:var(--bg); color:var(--t1); }
+  .nav-item.active { background:var(--accent-lt); color:var(--accent); font-weight:500; }
+
+  .nav-item svg { width:15px; height:15px; flex-shrink:0; opacity:.7; }
+  .nav-item.active svg { opacity:1; }
+
+  .nav-badge {
+    margin-left:auto; font-family:var(--font-m);
+    font-size:10px; padding:1px 7px; border-radius:20px;
+    background:var(--accent-lt); color:var(--accent);
+  }
+  .nav-badge.red { background:var(--red-bg); color:var(--red); }
+
+  .sidebar-footer {
+    margin-top:auto; padding:12px 10px 0;
+    border-top:1px solid var(--border);
+  }
+  .sys-block {
+    background:var(--surface-2); border:1px solid var(--border);
+    border-radius:var(--r-sm); padding:12px;
+  }
+  .sys-title { font-size:10px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--t3); margin-bottom:10px; }
+  .sys-row { display:flex; justify-content:space-between; margin-bottom:4px; }
+  .sys-key { font-size:12px; color:var(--t2); }
+  .sys-val { font-family:var(--font-m); font-size:11px; color:var(--accent); }
+  .sys-bar { height:3px; background:var(--border); border-radius:2px; margin-bottom:8px; overflow:hidden; }
+  .sys-bar:last-child { margin-bottom:0; }
+  .sys-bar-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,#2563eb,#60a5fa); }
+
+  /* ═══════════════════════════ MAIN ═══════════════════════════ */
+  .main {
+    flex:1; overflow:hidden;
+    padding:22px; display:flex; flex-direction:column;
+  }
+  .main::-webkit-scrollbar { width:4px; }
+  .main::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+  /* Page header */
+  .page-hdr { display:flex; align-items:flex-end; justify-content:space-between; }
+  .page-title { font-family:var(--font-d); font-size:24px; font-weight:700; letter-spacing:1px; margin-bottom:3px; }
+  .page-sub { font-size:13px; color:var(--t3); }
+  .page-actions { display:flex; gap:8px; }
+
+  .btn {
+    display:flex; align-items:center; gap:6px;
+    padding:7px 14px; border-radius:var(--r-sm);
+    font-size:13px; font-weight:500;
+    cursor:pointer; border:none; font-family:var(--font-b);
+    transition:all .18s;
+  }
+  .btn-primary { background:var(--accent); color:#fff; box-shadow:0 2px 10px rgba(37,99,235,.25); }
+  .btn-primary:hover { filter:brightness(1.08); transform:translateY(-1px); }
+  .btn-ghost { background:var(--surface); color:var(--t2); border:1px solid var(--border); }
+  .btn-ghost:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-lt); }
+
+  /* Stats */
+  .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+
+  .stat-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--r); padding:16px 18px;
+    box-shadow:var(--sh-sm); transition:box-shadow .2s,transform .2s;
+    position:relative; overflow:hidden;
+  }
+  .stat-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    border-radius:var(--r) var(--r) 0 0;
+    background:var(--accent);
+  }
+  .stat-card.s-green::before { background:var(--green); }
+  .stat-card.s-red::before   { background:var(--red); }
+  .stat-card.s-amber::before { background:var(--amber); }
+  .stat-card:hover { box-shadow:var(--sh-md); transform:translateY(-2px); }
+
+  .stat-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .stat-label { font-size:12px; color:var(--t2); font-weight:500; }
+  .stat-ico { width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; }
+  .stat-ico svg { width:14px; height:14px; }
+  .ico-blue  { background:var(--accent-lt); color:var(--accent); }
+  .ico-green { background:var(--green-bg);  color:var(--green); }
+  .ico-red   { background:var(--red-bg);    color:var(--red); }
+  .ico-amber { background:var(--amber-bg);  color:var(--amber); }
+
+  .stat-val {
+    font-family:var(--font-d); font-size:32px; font-weight:700;
+    letter-spacing:1px; line-height:1; color:var(--t1); margin-bottom:4px;
+  }
+  .stat-val sup { font-size:14px; font-weight:500; color:var(--t2); vertical-align:middle; }
+  .stat-trend { font-size:11.5px; color:var(--t3); }
+  .stat-trend b { color:var(--green); font-weight:600; }
+  .stat-trend b.dn { color:var(--red); }
+
+  /* Content grid */
+  .content-grid { display:grid; grid-template-columns:1fr 330px; gap:14px; }
+
+  /* Card */
+  .card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--r); box-shadow:var(--sh-sm);
+    overflow:hidden; display:flex; flex-direction:column;
+  }
+  .card-hdr {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 18px; border-bottom:1px solid var(--border);
+  }
+  .card-title { font-size:14px; font-weight:600; color:var(--t1); }
+  .card-meta  { font-size:12px; color:var(--t3); }
+  .card-link  { font-size:12px; color:var(--accent); cursor:pointer; }
+  .card-link:hover { text-decoration:underline; }
+
+  /* Filter */
+  .filter-bar { display:flex; gap:8px; padding:10px 18px; background:var(--surface-2); border-bottom:1px solid var(--border); }
+  .search {
+    flex:1; display:flex; align-items:center; gap:7px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--r-sm); padding:6px 10px; color:var(--t3); transition:border-color .15s;
+  }
+  .search:focus-within { border-color:var(--accent); }
+  .search input { border:none; outline:none; background:none; font-size:12.5px; font-family:var(--font-b); color:var(--t1); width:100%; }
+  .search input::placeholder { color:var(--t3); }
+  .fsel {
+    padding:6px 10px; border:1px solid var(--border); border-radius:var(--r-sm);
+    background:var(--surface); font-size:12.5px; color:var(--t2);
+    font-family:var(--font-b); cursor:pointer; outline:none; transition:border-color .15s;
+  }
+  .fsel:focus { border-color:var(--accent); }
+
+  /* Table */
+  table { width:100%; border-collapse:collapse; }
+  thead th {
+    padding:8px 18px; text-align:left;
+    font-size:10.5px; font-weight:600; letter-spacing:.8px; text-transform:uppercase;
+    color:var(--t3); background:var(--surface-2); border-bottom:1px solid var(--border);
+  }
+  tbody tr { border-bottom:1px solid #f1f4fb; transition:background .12s; cursor:pointer; }
+  tbody tr:last-child { border-bottom:none; }
+  tbody tr:hover { background:#f8f9fe; }
+  tbody td { padding:10px 18px; font-size:13px; color:var(--t2); vertical-align:middle; }
+
+  .dev-cell { display:flex; align-items:center; gap:9px; }
+  .dev-ico { width:28px; height:28px; border-radius:7px; border:1px solid var(--border); background:var(--surface-2); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .dev-ico svg { width:12px; height:12px; }
+  .dev-name { font-size:13px; color:var(--t1); font-weight:500; }
+  .dev-id { font-family:var(--font-m); font-size:10.5px; color:var(--t3); margin-top:1px; }
+
+  .tag { display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:20px; font-size:11.5px; font-weight:500; }
+  .tdot { width:5px; height:5px; border-radius:50%; }
+  .t-on   { background:var(--green-bg); color:var(--green); }
+  .t-on .tdot { background:var(--green); }
+  .t-off  { background:var(--red-bg);   color:var(--red); }
+  .t-off .tdot { background:var(--red); }
+  .t-idle { background:#f1f5f9; color:#64748b; }
+  .t-idle .tdot { background:#94a3b8; }
+
+  .sig { display:flex; align-items:flex-end; gap:2px; height:14px; }
+  .sbar { width:3px; border-radius:1px; background:var(--border); }
+  .sbar.on { background:var(--accent); }
+
+  .row-acts { display:flex; gap:5px; opacity:0; transition:opacity .15s; }
+  tbody tr:hover .row-acts { opacity:1; }
+  .rbtn { padding:3px 8px; border-radius:5px; font-size:11.5px; border:1px solid var(--border); background:var(--surface); color:var(--t2); cursor:pointer; transition:all .15s; font-family:var(--font-b); }
+  .rbtn:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-lt); }
+
+  .tbl-foot { display:flex; align-items:center; justify-content:space-between; padding:9px 18px; border-top:1px solid var(--border); background:var(--surface-2); }
+  .tcount { font-size:12px; color:var(--t3); font-family:var(--font-m); }
+  .pager { display:flex; gap:3px; }
+  .pgbtn { width:26px; height:26px; border:1px solid var(--border); border-radius:6px; background:var(--surface); color:var(--t2); font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; font-family:var(--font-m); }
+  .pgbtn:hover, .pgbtn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  /* Right column */
+  .right-col { display:flex; flex-direction:column; gap:12px; }
+
+  .mini-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); box-shadow:var(--sh-sm); padding:16px 16px 14px; }
+  .mini-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .mini-title { font-size:13px; font-weight:600; color:var(--t1); }
+  .live-pill { font-family:var(--font-m); font-size:10px; padding:2px 8px; border-radius:20px; background:var(--green-bg); color:var(--green); }
+
+  .spark-big { font-family:var(--font-d); font-size:26px; font-weight:700; color:var(--t1); letter-spacing:1px; line-height:1; }
+  .spark-big span { font-size:12px; font-weight:400; color:var(--t2); }
+  .spark-sub { font-size:11px; color:var(--green); margin:3px 0 11px; }
+  .spark-wrap { height:56px; }
+  .spark-wrap svg { width:100%; height:100%; }
+
+  .donut-row { display:flex; align-items:center; gap:16px; }
+  .leg { flex:1; }
+  .leg-item { display:flex; align-items:center; gap:7px; margin-bottom:7px; font-size:12px; color:var(--t2); }
+  .leg-item:last-child { margin-bottom:0; }
+  .ldot { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+  .lval { margin-left:auto; font-family:var(--font-m); font-size:11px; font-weight:500; color:var(--t1); }
+
+  .alert-row { display:flex; gap:10px; padding:10px 18px; border-bottom:1px solid #f1f4fb; cursor:pointer; transition:background .12s; }
+  .alert-row:last-child { border-bottom:none; }
+  .alert-row:hover { background:#f8f9fe; }
+  .adot-wrap { padding-top:4px; }
+  .adot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .a-msg { font-size:12.5px; color:var(--t1); margin-bottom:3px; }
+  .a-time { font-family:var(--font-m); font-size:10.5px; color:var(--t3); }
+
+  /* ── 物模型页面 ── */
+  .tsl-toolbar {
+    display:flex; align-items:center; gap:10px;
+    flex-shrink: 0;
+    justify-content:space-between;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--r);
+    padding:10px 12px;
+    box-shadow:var(--sh-xs);
+  }
+  .tsl-toolbar-left { display:flex; align-items:center; gap:10px; min-width:0; }
+  .tsl-toolbar-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .tsl-toolbar-left .search { max-width: 320px; }
+
+  .tsl-body {
+    display:grid;
+    grid-template-columns: 240px 1fr;
+    gap:14px;
+    flex:1;
+    overflow:hidden;
+    min-height:0;
+  }
+
+  .tsl-list { display:flex; flex-direction:column; overflow:hidden; }
+  .tsl-items { flex:1; overflow-y:auto; padding:6px; }
+  .tsl-items::-webkit-scrollbar { width:3px; }
+  .tsl-items::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+  .tsl-item {
+    display:flex; align-items:center; gap:10px;
+    padding:10px 10px;
+    border-radius:var(--r-sm);
+    cursor:pointer;
+    transition:background .15s;
+    margin-bottom:2px;
+  }
+  .tsl-item:hover { background:var(--bg); }
+  .tsl-item.active { background:var(--accent-lt); }
+
+  .tsl-item-icon {
+    width:34px; height:34px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+
+  .tsl-item-info { flex:1; min-width:0; }
+  .tsl-item-name { font-size:13px; font-weight:500; color:var(--t1); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tsl-item-id { font-family:var(--font-m); font-size:10px; color:var(--t3); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .tsl-item-count { font-size:11px; color:var(--t3); flex-shrink:0; text-align:right; white-space:nowrap; }
+  .tsl-item-count span { font-family:var(--font-m); font-size:13px; font-weight:600; color:var(--accent); display:block; }
+  .tsl-item.active .tsl-item-count span { color:var(--accent); }
+
+  .tsl-detail { display:none; flex-direction:column; overflow:hidden; min-height:0; }
+  .tsl-detail.tsl-detail-active { display:flex; }
+
+  .tab-panel { display:none; flex-direction:column; flex:1; overflow:auto; }
+  .tab-panel.active-tab { display:flex; }
+
+  /* Prop tabs */
+  .prop-tabs {
+    display:flex; gap:0;
+    border-bottom:1px solid var(--border);
+    padding:0 18px;
+    background:var(--surface);
+    flex-shrink:0;
+  }
+  .prop-tab {
+    padding:9px 14px;
+    font-size:13px; font-weight:500;
+    color:var(--t3);
+    background:none; border:none;
+    border-bottom:2px solid transparent;
+    cursor:pointer;
+    transition:all .15s;
+    margin-bottom:-1px;
+    display:flex; align-items:center; gap:6px;
+    font-family:var(--font-b);
+  }
+  .prop-tab:hover { color:var(--t1); }
+  .prop-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .tab-count {
+    font-family:var(--font-m); font-size:10px;
+    padding:1px 6px; border-radius:10px;
+    background:var(--border); color:var(--t2);
+  }
+  .prop-tab.active .tab-count { background:var(--accent-lt); color:var(--accent); }
+
+  .tab-panel { display:flex; flex-direction:column; }
+
+  /* Property table tags */
+  .code-tag {
+    font-family:var(--font-m); font-size:11.5px;
+    background:var(--surface-2); color:var(--t2);
+    border:1px solid var(--border);
+    padding:2px 7px; border-radius:5px;
+  }
+
+  .dtype-tag {
+    font-family:var(--font-m); font-size:11px;
+    padding:2px 8px; border-radius:4px; font-weight:500;
+  }
+  .dtype-float { background:#eff4ff; color:#2563eb; }
+  .dtype-int   { background:#f0fdf4; color:#16a34a; }
+  .dtype-bool  { background:#fffbeb; color:#d97706; }
+
+  .proto-tag {
+    font-family:var(--font-m); font-size:11px;
+    padding:2px 8px; border-radius:4px; font-weight:500;
+  }
+  .proto-mqtt    { background:#eff4ff; color:#2563eb; }
+  .proto-http    { background:#f0fdf4; color:#16a34a; }
+  .proto-coap    { background:#f5f3ff; color:#7c3aed; }
+  .proto-modbus  { background:#fffbeb; color:#d97706; }
+  .src-raw     { background:#f1f5f9; color:#64748b; }
+  .src-formula { background:#f5f3ff; color:#7c3aed; }
+
+  /* Modal */
+  .modal-mask {
+    position:fixed; inset:0; background:rgba(15,23,42,.35);
+    display:none; align-items:center; justify-content:center;
+    z-index:100;
+  }
+  .modal-mask.open { display:flex; }
+
+  .modal {
+    background:var(--surface);
+    border-radius:var(--r);
+    box-shadow:var(--sh-lg);
+    width:480px; max-width:90vw;
+    display:flex; flex-direction:column;
+    animation:fadeUp .2s ease;
+  }
+
+  .modal-hdr {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 20px;
+    border-bottom:1px solid var(--border);
+  }
+  .modal-title { font-size:15px; font-weight:600; color:var(--t1); }
+  .modal-close {
+    width:28px; height:28px; border-radius:6px;
+    border:none; background:transparent;
+    color:var(--t3); cursor:pointer; font-size:14px;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .15s;
+  }
+  .modal-close:hover { background:var(--bg); color:var(--t1); }
+
+  .modal-body { padding:18px 20px; display:flex; flex-direction:column; gap:14px; }
+
+  .modal.modal-wide { width:860px; }
+  @media (max-width: 920px) { .modal.modal-wide { width:92vw; } }
+
+  .wizard-steps { display:flex; gap:10px; position:relative; }
+  .wizard-steps::before {
+    content:"";
+    position:absolute;
+    left:18px; right:18px;
+    top:50%;
+    height:2px;
+    background:var(--border);
+    transform:translateY(-50%);
+  }
+  .wizard-stepper {
+    display:flex; align-items:center; gap:8px;
+    padding:7px 10px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:var(--surface-2);
+    color:var(--t2);
+    font-size:12.5px;
+    font-weight:500;
+    flex:1;
+    min-width:0;
+    position:relative;
+    z-index:1;
+  }
+  .wizard-stepper.active { background:var(--accent-lt); border-color:rgba(37,99,235,.35); color:var(--accent); }
+  .wizard-stepper-num {
+    width:18px; height:18px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-m); font-size:11px;
+    background:var(--border); color:var(--t2);
+    flex-shrink:0;
+  }
+  .wizard-stepper.active .wizard-stepper-num { background:var(--accent); color:#fff; }
+  .wizard-stepper-text { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .wizard-step { display:none; flex-direction:column; gap:14px; }
+  .wizard-step.active { display:flex; }
+
+  .wizard-tabs {
+    display:flex;
+    border:1px solid var(--border);
+    border-radius:var(--r-sm);
+    background:var(--surface-2);
+    overflow:hidden;
+  }
+  .wizard-tab {
+    flex:1;
+    border:none;
+    cursor:pointer;
+    padding:9px 12px;
+    background:transparent;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    font-family:var(--font-b);
+    font-size:13px;
+    font-weight:500;
+    color:var(--t2);
+    transition:all .15s;
+  }
+  .wizard-tab + .wizard-tab { border-left:1px solid var(--border); }
+  .wizard-tab.active { background:var(--surface); color:var(--accent); }
+  .wizard-tab.active .tab-count { background:var(--accent-lt); color:var(--accent); }
+
+  .wizard-panel { display:none; flex-direction:column; gap:10px; }
+  .wizard-panel.active { display:flex; }
+
+  .form-row { display:flex; flex-direction:column; gap:5px; }
+  .form-row.two-col { flex-direction:row; gap:12px; }
+  .form-row.two-col > div { flex:1; display:flex; flex-direction:column; gap:5px; }
+
+  .form-label { font-size:12.5px; font-weight:500; color:var(--t2); }
+  .req { color:var(--red); }
+
+  .form-input {
+    padding:8px 10px;
+    border:1px solid var(--border);
+    border-radius:var(--r-sm);
+    font-size:13px; font-family:var(--font-b);
+    color:var(--t1); outline:none;
+    transition:border-color .15s;
+    background:var(--surface);
+    width:100%;
+  }
+  .form-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(37,99,235,.08); }
+  textarea.form-input { resize:none; }
+  select.form-input { cursor:pointer; }
+
+  .form-hint { font-size:11px; color:var(--t3); }
+
+  .modal-foot {
+    display:flex; justify-content:flex-end; gap:8px;
+    padding:14px 20px;
+    border-top:1px solid var(--border);
+  }
+
+  .wb-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+  .page { display:none !important; flex-direction:column; gap:18px; flex:1; min-height:0; overflow-y:auto; }
+  .page.active { display:flex !important; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  .stats-grid { animation:fadeUp .4s ease .05s both; }
+  .wb-grid    { animation:fadeUp .4s ease .18s both; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ HEADER ══════════ -->
+<header class="hdr">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none">
+        <polygon points="12,2 22,7.5 22,16.5 12,22 2,16.5 2,7.5" stroke="white" stroke-width="1.6" fill="none" opacity=".65"/>
+        <circle cx="12" cy="12" r="3" fill="white"/>
+        <line x1="12" y1="9"   x2="12" y2="3.5" stroke="white" stroke-width="1.5"/>
+        <line x1="14.6" y1="13.5" x2="19.5" y2="16.2" stroke="white" stroke-width="1.5"/>
+        <line x1="9.4"  y1="13.5" x2="4.5"  y2="16.2" stroke="white" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-name">Edge<em>Link</em></div>
+      <div class="logo-tag">IoT Management Platform</div>
+    </div>
+  </div>
+
+  <div class="hdr-right">
+    <button class="hdr-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="dot"></span>
+    </button>
+    <button class="hdr-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+    <div class="hdr-sep"></div>
+    <div class="user-chip">
+      <div class="avatar">AD</div>
+      <span class="user-name">管理员</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" style="margin-left:2px"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ LAYOUT ══════════ -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="nav-section">
+      <div class="nav-item active" data-page="workbench">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        工作台
+      </div>
+      <div class="nav-item" data-page="tsl">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        物模型管理
+        <span class="nav-badge">12</span>
+      </div>
+      <div class="nav-item" data-page="products">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        产品管理
+        <span class="nav-badge">8</span>
+      </div>
+      <div class="nav-item" data-page="devices">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        设备管理
+        <span class="nav-badge red">3</span>
+      </div>
+    </div>
+
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+
+
+
+
+    <!-- ══ 工作台页面 ══ -->
+    <div id="page-workbench" class="page active" style="gap:18px">
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card s-green">
+          <div class="stat-top"><span class="stat-label">在线设备</span><div class="stat-ico ico-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div></div>
+          <div class="stat-val">1,085</div>
+          <div class="stat-trend"><b>↑ +23</b> 今日新增</div>
+        </div>
+        <div class="stat-card s-red">
+          <div class="stat-top"><span class="stat-label">离线告警</span><div class="stat-ico ico-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div></div>
+          <div class="stat-val" style="color:var(--red)">3</div>
+          <div class="stat-trend"><b class="dn">需立即处理</b></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top"><span class="stat-label">数据完整率</span><div class="stat-ico ico-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div></div>
+          <div class="stat-val">98<sup>%</sup></div>
+          <div class="stat-trend"><b>↑ +0.3%</b> 较昨日</div>
+        </div>
+        <div class="stat-card s-amber">
+          <div class="stat-top"><span class="stat-label">今日消息量</span><div class="stat-ico ico-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div></div>
+          <div class="stat-val">4.2<sup>M</sup></div>
+          <div class="stat-trend"><b>↑ +12%</b> 较昨日</div>
+        </div>
+      </div>
+
+      <!-- Workbench content grid -->
+      <div class="wb-grid">
+        <!-- Sparkline -->
+        <div class="mini-card">
+          <div class="mini-hdr">
+            <span class="mini-title">消息吞吐量</span>
+            <span class="live-pill">● 实时</span>
+          </div>
+          <div class="spark-big">4,823 <span>msg/s</span></div>
+          <div class="spark-sub">↑ +8.3% 较昨日均值</div>
+          <div class="spark-wrap">
+            <svg viewBox="0 0 300 56" preserveAspectRatio="none">
+              <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2563eb" stop-opacity=".12"/><stop offset="100%" stop-color="#2563eb" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0,48 L20,42 L40,38 L60,41 L80,32 L100,24 L120,28 L140,20 L160,14 L180,18 L200,10 L220,14 L240,6 L260,10 L280,4 L300,3 L300,56 L0,56Z" fill="url(#sg)"/>
+              <path d="M0,48 L20,42 L40,38 L60,41 L80,32 L100,24 L120,28 L140,20 L160,14 L180,18 L200,10 L220,14 L240,6 L260,10 L280,4 L300,3" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="300" cy="3" r="3" fill="#2563eb"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Donut -->
+        <div class="mini-card">
+          <div class="mini-title" style="margin-bottom:12px">设备类型分布</div>
+          <div class="donut-row">
+            <svg width="84" height="84" viewBox="0 0 84 84" style="flex-shrink:0">
+              <defs><linearGradient id="dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient></defs>
+              <circle cx="42" cy="42" r="31" fill="none" stroke="#f0f2f8" stroke-width="11"/>
+              <circle cx="42" cy="42" r="31" fill="none" stroke="url(#dg)" stroke-width="11" stroke-dasharray="81.9 194.8" stroke-dashoffset="0" transform="rotate(-90 42 42)"/>
+              <circle cx="42" cy="42" r="31" fill="none" stroke="#60a5fa" stroke-width="11" opacity=".55" stroke-dasharray="54.5 194.8" stroke-dashoffset="-81.9" transform="rotate(-90 42 42)"/>
+              <circle cx="42" cy="42" r="31" fill="none" stroke="#93c5fd" stroke-width="11" opacity=".4" stroke-dasharray="35.1 194.8" stroke-dashoffset="-136.4" transform="rotate(-90 42 42)"/>
+              <circle cx="42" cy="42" r="31" fill="none" stroke="#e2e8f0" stroke-width="11" stroke-dasharray="23.4 194.8" stroke-dashoffset="-171.5" transform="rotate(-90 42 42)"/>
+              <text x="42" y="38" text-anchor="middle" fill="#0f172a" font-family="Rajdhani" font-size="14" font-weight="700">1248</text>
+              <text x="42" y="50" text-anchor="middle" fill="#9aa5be" font-family="JetBrains Mono" font-size="6">TOTAL</text>
+            </svg>
+            <div class="leg">
+              <div class="leg-item"><div class="ldot" style="background:linear-gradient(135deg,#2563eb,#60a5fa)"></div>传感器<span class="lval">42%</span></div>
+              <div class="leg-item"><div class="ldot" style="background:#60a5fa;opacity:.8"></div>网关设备<span class="lval">28%</span></div>
+              <div class="leg-item"><div class="ldot" style="background:#93c5fd;opacity:.7"></div>控制器<span class="lval">18%</span></div>
+              <div class="leg-item"><div class="ldot" style="background:#e2e8f0"></div>其他<span class="lval">12%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="card" style="grid-column:1/-1">
+          <div class="card-hdr">
+            <span class="card-title">近期告警</span>
+            <span class="card-link">查看全部 →</span>
+          </div>
+          <div>
+            <div class="alert-row"><div class="adot-wrap"><div class="adot" style="background:var(--red)"></div></div><div><div class="a-msg">设备 DEV-2024-142 连接超时</div><div class="a-time">14:10:32 · 智能电表-M12</div></div></div>
+            <div class="alert-row"><div class="adot-wrap"><div class="adot" style="background:var(--red)"></div></div><div><div class="a-msg">设备 DEV-2024-401 断线 5 小时</div><div class="a-time">09:15:44 · 压力传感器-P02</div></div></div>
+            <div class="alert-row"><div class="adot-wrap"><div class="adot" style="background:var(--amber)"></div></div><div><div class="a-msg">仓储温湿度超阈值告警</div><div class="a-time">13:48:01 · DEV-2024-001</div></div></div>
+            <div class="alert-row"><div class="adot-wrap"><div class="adot" style="background:#94a3b8"></div></div><div><div class="a-msg">固件升级完成，版本 v3.1.2</div><div class="a-time">12:00:00 · 边缘网关-G03</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 设备管理页面 ══ -->
+    <div id="page-devices" class="page">
+      <!-- 上：工具栏 -->
+      <div class="tsl-toolbar">
+        <div class="tsl-toolbar-left">
+          <div class="search">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="搜索设备 ID 或名称…">
+          </div>
+          <select class="fsel"><option>全部状态</option><option>在线</option><option>离线</option><option>空闲</option></select>
+          <select class="fsel"><option>全部产品</option><option>传感器</option><option>网关</option><option>控制器</option></select>
+        </div>
+        <div class="tsl-toolbar-right">
+          <button class="btn btn-primary" onclick="openModal('add-device-modal')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            添加设备
+          </button>
+        </div>
+      </div>
+
+      <div class="card" style="flex:1;min-height:0">
+        <div class="card-hdr">
+          <span class="card-title">设备列表</span>
+          <span class="card-meta">共 1,248 台设备</span>
+        </div>
+        <div style="flex:1;overflow:auto">
+          <table>
+            <thead><tr><th>设备</th><th>产品</th><th>地址</th><th>描述</th><th>创建/更新</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div><div><div class="dev-name">仓储温湿度-A01</div><div class="dev-id"><span class="code-tag">dev_warehouse_th_001</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">温湿度传感器</span><span class="code-tag">#101</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">mqtt://uplink/warehouse/a01</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">mqtt://downlink/warehouse/a01</span></div></div></td><td style="color:var(--t3);font-size:12.5px">仓储区温湿度一体传感器</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-01-12 10:20</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:32</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">属性</button><button class="rbtn">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><div><div class="dev-name">边缘网关-G03</div><div class="dev-id"><span class="code-tag">dev_edge_gw_003</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">智能网关</span><span class="code-tag">#208</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">tcp://10.0.2.18:1883</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">tcp://10.0.2.18:1884</span></div></div></td><td style="color:var(--t3);font-size:12.5px">园区边缘网关（北区）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-02-05 09:12</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:33</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">属性</button><button class="rbtn">调试</button><button class="rbtn">编辑</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div><div class="dev-name">智能电表-M12</div><div class="dev-id"><span class="code-tag">dev_meter_m12</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">电力计量</span><span class="code-tag">#356</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">modbus://rtu/COM3/1</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">modbus://rtu/COM3/1</span></div></div></td><td style="color:var(--t3);font-size:12.5px">配电室 1# 回路计量设备</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-03-01 16:40</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 12:10</div></div></td><td><span class="tag t-off"><span class="tdot"></span>离线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">属性</button><button class="rbtn">重连</button><button class="rbtn">编辑</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg></div><div><div class="dev-name">CO₂ 监测-S08</div><div class="dev-id"><span class="code-tag">dev_co2_s08</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">环境监测</span><span class="code-tag">#142</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">http://10.0.3.21:9000/report</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">http://10.0.3.21:9000/cmd</span></div></div></td><td style="color:var(--t3);font-size:12.5px">会议室空气质量监测设备</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-04-10 08:05</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:14</div></div></td><td><span class="tag t-idle"><span class="tdot"></span>空闲</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">属性</button><button class="rbtn">调试</button><button class="rbtn">编辑</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div><div class="dev-name">楼宇控制器-B05</div><div class="dev-id"><span class="code-tag">dev_bms_ctrl_b05</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">楼宇自控</span><span class="code-tag">#512</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">bacnet://192.168.8.20/1005</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">bacnet://192.168.8.20/1005</span></div></div></td><td style="color:var(--t3);font-size:12.5px">楼宇自控主控器（B 栋 5F）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-04-08 11:28</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:31</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">属性</button><button class="rbtn">调试</button><button class="rbtn">编辑</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div><div><div class="dev-name">压力传感器-P02</div><div class="dev-id"><span class="code-tag">dev_pressure_p02</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">工业压力</span><span class="code-tag">#619</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">coap://10.0.4.15/sensors/p02</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">coap://10.0.4.15/cmd/p02</span></div></div></td><td style="color:var(--t3);font-size:12.5px">高压管线压力监测点（P02）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-03-22 15:08</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 09:15</div></div></td><td><span class="tag t-off"><span class="tdot"></span>离线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">属性</button><button class="rbtn">重连</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-foot">
+          <span class="tcount">显示 1–6 / 共 1,248 台设备</span>
+          <div class="pager">
+            <button class="pgbtn">‹</button>
+            <button class="pgbtn active">1</button>
+            <button class="pgbtn">2</button>
+            <button class="pgbtn">3</button>
+            <button class="pgbtn">…</button>
+            <button class="pgbtn">42</button>
+            <button class="pgbtn">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 添加设备弹窗 ══ -->
+    <div class="modal-mask" id="add-device-modal" onclick="closeModal('add-device-modal')">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <span class="modal-title">添加设备</span>
+          <button class="modal-close" onclick="closeModal('add-device-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <label class="form-label">设备名称 <span class="req">*</span></label>
+            <input class="form-input" type="text" placeholder="请输入设备名称">
+          </div>
+          <div class="form-row">
+            <label class="form-label">设备 ID <span class="req">*</span></label>
+            <input class="form-input" type="text" placeholder="如：DEV-2024-001" style="font-family:var(--font-m);font-size:12px">
+            <div class="form-hint">建议使用统一命名规则，便于检索与管理</div>
+          </div>
+          <div class="form-row two-col">
+            <div>
+              <label class="form-label">所属产品 <span class="req">*</span></label>
+              <select class="form-input">
+                <option value="">请选择产品</option>
+                <option>温湿度传感器</option>
+                <option>智能网关</option>
+                <option>电力计量</option>
+                <option>环境监测</option>
+                <option>楼宇自控</option>
+                <option>工业压力</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">初始状态</label>
+              <select class="form-input">
+                <option>在线</option>
+                <option>离线</option>
+                <option>空闲</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">备注</label>
+            <input class="form-input" type="text" placeholder="可选：设备位置、用途等">
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-ghost" onclick="closeModal('add-device-modal')">取消</button>
+          <button class="btn btn-primary">确认添加</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 物模型管理页面 ══ -->
+    <div id="page-tsl" class="page">
+
+      <!-- 上：工具栏 -->
+      <div class="tsl-toolbar">
+        <div class="tsl-toolbar-left">
+          <div class="search">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="搜索物模型名称或标识符…">
+          </div>
+        </div>
+        <div class="tsl-toolbar-right">
+          <button class="btn btn-primary" onclick="openModal('add-model-modal')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            添加物模型
+          </button>
+        </div>
+      </div>
+
+      <!-- 下：物模型列表表格 -->
+      <div class="card" style="flex:1;min-height:0">
+        <div class="card-hdr">
+          <span class="card-title">物模型列表</span>
+          <span class="card-meta">共 5 个</span>
+        </div>
+        <div style="flex:1;overflow:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>模型名称</th>
+                <th>唯一标识符</th>
+                <th>描述</th>
+                <th>属性数</th>
+                <th>创建时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:9px">
+                    <div style="width:30px;height:30px;border-radius:8px;background:#eff4ff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div style="font-weight:500;color:var(--t1)">温湿度传感器模型</div>
+                  </div>
+                </td>
+                <td><span class="code-tag">thm_temperature_humidity</span></td>
+                <td style="color:var(--t3);font-size:12.5px">温湿度一体传感器数据模型</td>
+                <td><span class="nav-badge" style="margin:0">6</span></td>
+                <td style="font-family:var(--font-m);font-size:12px">2024-01-10</td>
+                <td><div class="row-acts" style="opacity:1;gap:5px">
+                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:9px">
+                    <div style="width:30px;height:30px;border-radius:8px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg>
+                    </div>
+                    <div style="font-weight:500;color:var(--t1)">CO₂ 环境监测模型</div>
+                  </div>
+                </td>
+                <td><span class="code-tag">thm_co2_monitor</span></td>
+                <td style="color:var(--t3);font-size:12.5px">室内空气质量监测模型</td>
+                <td><span class="nav-badge" style="margin:0">4</span></td>
+                <td style="font-family:var(--font-m);font-size:12px">2024-02-15</td>
+                <td><div class="row-acts" style="opacity:1;gap:5px">
+                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:9px">
+                    <div style="width:30px;height:30px;border-radius:8px;background:#fffbeb;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    </div>
+                    <div style="font-weight:500;color:var(--t1)">智能电表模型</div>
+                  </div>
+                </td>
+                <td><span class="code-tag">thm_smart_meter</span></td>
+                <td style="color:var(--t3);font-size:12.5px">电力计量与功率监测模型</td>
+                <td><span class="nav-badge" style="margin:0">5</span></td>
+                <td style="font-family:var(--font-m);font-size:12px">2024-03-01</td>
+                <td><div class="row-acts" style="opacity:1;gap:5px">
+                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:9px">
+                    <div style="width:30px;height:30px;border-radius:8px;background:#fef2f2;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    </div>
+                    <div style="font-weight:500;color:var(--t1)">工业压力传感器模型</div>
+                  </div>
+                </td>
+                <td><span class="code-tag">thm_pressure_sensor</span></td>
+                <td style="color:var(--t3);font-size:12.5px">工业级压力与温补监测模型</td>
+                <td><span class="nav-badge" style="margin:0">3</span></td>
+                <td style="font-family:var(--font-m);font-size:12px">2024-03-20</td>
+                <td><div class="row-acts" style="opacity:1;gap:5px">
+                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:9px">
+                    <div style="width:30px;height:30px;border-radius:8px;background:#f5f3ff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                    <div style="font-weight:500;color:var(--t1)">楼宇控制器模型</div>
+                  </div>
+                </td>
+                <td><span class="code-tag">thm_building_ctrl</span></td>
+                <td style="color:var(--t3);font-size:12.5px">楼宇自控设备属性与状态模型</td>
+                <td><span class="nav-badge" style="margin:0">7</span></td>
+                <td style="font-family:var(--font-m);font-size:12px">2024-04-05</td>
+                <td><div class="row-acts" style="opacity:1;gap:5px">
+                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
+                </div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-foot">
+          <span class="tcount">共 5 个物模型</span>
+          <div class="pager">
+            <button class="pgbtn">‹</button>
+            <button class="pgbtn active">1</button>
+            <button class="pgbtn">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 添加物模型弹窗 ══ -->
+    <div class="modal-mask" id="add-model-modal" onclick="closeModal('add-model-modal')">
+      <div class="modal modal-wide" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <span class="modal-title">添加物模型</span>
+          <button class="modal-close" onclick="closeModal('add-model-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="wizard-steps">
+            <div class="wizard-stepper active" data-step="1">
+              <span class="wizard-stepper-num">1</span>
+              <span class="wizard-stepper-text">配置基础信息</span>
+            </div>
+            <div class="wizard-stepper" data-step="2">
+              <span class="wizard-stepper-num">2</span>
+              <span class="wizard-stepper-text">配置功能（属性 / 功能 / 事件）</span>
+            </div>
+          </div>
+
+          <div class="wizard-step active" data-step="1">
+            <div class="form-row two-col">
+              <div>
+                <label class="form-label">模型名称 <span class="req">*</span></label>
+                <input class="form-input" type="text" placeholder="请输入模型名称">
+              </div>
+              <div>
+                <label class="form-label">模型标识符 <span class="req">*</span></label>
+                <input class="form-input" type="text" placeholder="如：thm_temperature_sensor" style="font-family:var(--font-m);font-size:12px">
+                <div class="form-hint">对应 thing_model.identifier；只能包含字母、数字和下划线</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label">描述</label>
+              <textarea class="form-input" rows="3" placeholder="对应 thing_model.description（可选）"></textarea>
+            </div>
+            <div class="form-row">
+              <label class="form-label">图标</label>
+              <textarea class="form-input" rows="3" placeholder="对应 thing_model.icon（可选：SVG / Base64 / URL）"></textarea>
+              <div class="form-hint">用于列表展示，支持粘贴 SVG/URL/Base64</div>
+            </div>
+          </div>
+
+          <div class="wizard-step" data-step="2">
+            <div class="wizard-tabs">
+              <button class="wizard-tab active" onclick="switchWizardTab(this,'wizard-props')">属性 <span class="tab-count">2</span></button>
+              <button class="wizard-tab" onclick="switchWizardTab(this,'wizard-funcs')">功能 <span class="tab-count">1</span></button>
+              <button class="wizard-tab" onclick="switchWizardTab(this,'wizard-events')">事件 <span class="tab-count">1</span></button>
+            </div>
+
+            <div id="wizard-props" class="wizard-panel active">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div style="font-size:13px;font-weight:600;color:var(--t1)">属性列表</div>
+                <button class="btn btn-ghost" style="padding:6px 10px" onclick="openModal('add-prop-modal')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  添加属性
+                </button>
+              </div>
+              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:240px;overflow:auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Key</th>
+                      <th>名称</th>
+                      <th>数据类型</th>
+                      <th>单位</th>
+                      <th>来源</th>
+                      <th>表达式</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="cursor:default">
+                      <td><span class="code-tag">temperature</span></td>
+                      <td style="color:var(--t2)">温度</td>
+                      <td><span class="dtype-tag dtype-float">float</span></td>
+                      <td style="font-family:var(--font-m);font-size:12px;color:var(--t2)">℃</td>
+                      <td><span class="code-tag src-raw">raw</span></td>
+                      <td style="color:var(--t3);font-size:12px">—</td>
+                      <td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td>
+                    </tr>
+                    <tr style="cursor:default">
+                      <td><span class="code-tag">temp_f</span></td>
+                      <td style="color:var(--t2)">华氏温度</td>
+                      <td><span class="dtype-tag dtype-float">float</span></td>
+                      <td style="font-family:var(--font-m);font-size:12px;color:var(--t2)">℉</td>
+                      <td><span class="code-tag src-formula">formula</span></td>
+                      <td style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">temperature * 1.8 + 32</td>
+                      <td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div id="wizard-funcs" class="wizard-panel">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div style="font-size:13px;font-weight:600;color:var(--t1)">功能列表</div>
+                <button class="btn btn-ghost" style="padding:6px 10px" onclick="openModal('add-prop-modal')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  添加功能
+                </button>
+              </div>
+              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:240px;overflow:auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Key</th>
+                      <th>名称</th>
+                      <th>数据类型</th>
+                      <th>单位</th>
+                      <th>来源</th>
+                      <th>表达式</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="cursor:default">
+                      <td><span class="code-tag">set_report_interval</span></td>
+                      <td style="color:var(--t2)">设置上报周期</td>
+                      <td><span class="dtype-tag dtype-int">int</span></td>
+                      <td style="font-family:var(--font-m);font-size:12px;color:var(--t2)">s</td>
+                      <td><span class="code-tag src-raw">raw</span></td>
+                      <td style="color:var(--t3);font-size:12px">—</td>
+                      <td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div id="wizard-events" class="wizard-panel">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div style="font-size:13px;font-weight:600;color:var(--t1)">事件列表</div>
+                <button class="btn btn-ghost" style="padding:6px 10px" onclick="openModal('add-prop-modal')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  添加事件
+                </button>
+              </div>
+              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:240px;overflow:auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Key</th>
+                      <th>名称</th>
+                      <th>数据类型</th>
+                      <th>单位</th>
+                      <th>来源</th>
+                      <th>表达式</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="cursor:default">
+                      <td><span class="code-tag">over_threshold</span></td>
+                      <td style="color:var(--t2)">超阈值告警</td>
+                      <td><span class="dtype-tag dtype-bool">bool</span></td>
+                      <td style="color:var(--t3);font-size:12px">—</td>
+                      <td><span class="code-tag src-raw">raw</span></td>
+                      <td style="color:var(--t3);font-size:12px">—</td>
+                      <td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-ghost wizard-step-btn" data-show-on="1" onclick="closeModal('add-model-modal')">取消</button>
+          <button class="btn btn-primary wizard-step-btn" data-show-on="1" onclick="wizardNext('add-model-modal')">下一步</button>
+          <button class="btn btn-ghost wizard-step-btn" data-show-on="2" onclick="wizardPrev('add-model-modal')">上一步</button>
+          <button class="btn btn-primary wizard-step-btn" data-show-on="2">确认添加</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 添加属性弹窗 ══ -->
+    <div class="modal-mask" id="add-prop-modal" onclick="closeModal('add-prop-modal')">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <span class="modal-title">添加属性</span>
+          <button class="modal-close" onclick="closeModal('add-prop-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <label class="form-label">属性名称 <span class="req">*</span></label>
+            <input class="form-input" type="text" placeholder="如：温度">
+          </div>
+          <div class="form-row">
+            <label class="form-label">标识符 Key <span class="req">*</span></label>
+            <input class="form-input" type="text" placeholder="如：temperature">
+          </div>
+          <div class="form-row two-col">
+            <div>
+              <label class="form-label">数据类型 <span class="req">*</span></label>
+              <select class="form-input">
+                <option>Float（浮点数）</option>
+                <option>Int（整数）</option>
+                <option>Bool（布尔）</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">单位</label>
+              <input class="form-input" type="text" placeholder="如：℃、%、kW">
+            </div>
+          </div>
+          <div class="form-row two-col">
+            <div>
+              <label class="form-label">属性类型 <span class="req">*</span></label>
+              <select class="form-input">
+                <option>Property（属性）</option>
+                <option>Function（功能）</option>
+                <option>Event（事件）</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">来源类型</label>
+              <select class="form-input">
+                <option>Raw（原始值）</option>
+                <option>Formula（公式）</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row" id="expr-row">
+            <label class="form-label">公式表达式</label>
+            <input class="form-input" type="text" placeholder="如：temperature * 1.8 + 32" style="font-family:var(--font-m);font-size:12px">
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-ghost" onclick="closeModal('add-prop-modal')">取消</button>
+          <button class="btn btn-primary">确认添加</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 产品管理页面 ══ -->
+    <div id="page-products" class="page">
+
+      <!-- 上：工具栏 -->
+      <div class="tsl-toolbar">
+        <div class="tsl-toolbar-left">
+          <div class="search">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="搜索产品名称或标识符…">
+          </div>
+          <select class="fsel">
+            <option>全部协议</option>
+            <option>MQTT</option>
+            <option>HTTP</option>
+            <option>CoAP</option>
+            <option>Modbus</option>
+          </select>
+        </div>
+        <div class="tsl-toolbar-right">
+          <button class="btn btn-primary" onclick="openModal('add-product-modal')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            添加产品
+          </button>
+        </div>
+      </div>
+
+      <!-- 下：产品列表表格 -->
+      <div class="card" style="flex:1;min-height:0">
+        <div class="card-hdr">
+          <span class="card-title">产品列表</span>
+          <span class="card-meta">共 8 个产品</span>
+        </div>
+        <div style="flex:1;overflow:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>产品名称</th>
+                <th>唯一标识符</th>
+                <th>绑定物模型</th>
+                <th>通信协议</th>
+                <th>创建时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="dev-cell">
+                    <div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div>
+                    <div><div class="dev-name">仓储温湿度传感器</div><div class="dev-id">设备接入产品</div></div>
+                  </div>
+                </td>
+                <td><span class="code-tag">prod_warehouse_th</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <div style="width:18px;height:18px;border-radius:4px;background:#eff4ff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <span style="font-size:12.5px;color:var(--t2)">温湿度传感器模型</span>
+                  </div>
+                </td>
+                <td><span class="proto-tag proto-mqtt">MQTT</span></td>
+                <td style="font-family:var(--font-m);font-size:12px">2024-01-12</td>
+                <td><div class="row-acts" style="opacity:1;gap:5px">
+                  <button class="rbtn">查看</button>
+                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="dev-cell">
+                    <div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg></div>
+                    <div><div class="dev-name">室内空气质量监测仪</div><div class="dev-id">设备接入产品</div></div>
+                  </div>
+                </td>
+                <td><span class="code-tag">prod_indoor_air</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <div style="width:18px;height:18px;border-radius:4px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg>
+                    </div>
+                    <span style="font-size:12.5px;color:var(--t2)">CO₂ 环境监测模型</span>
+                  </div>
+                </td>
+                <td><span class="proto-tag proto-mqtt">MQTT</span></td>
+                <td style="font-family:var(--font-m);font-size:12px">2024-02-18</td>
+                <td><div class="row-acts" style="opacity:1;gap:5px">
+                  <button class="rbtn">查看</button>
+                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="dev-cell">
+                    <div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+                    <div><div class="dev-name">工业智能电表</div><div class="dev-id">设备接入产品</div></div>
+                  </div>
+                </td>
+                <td><span class="code-tag">prod_smart_meter_v1</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <div style="width:18px;height:18px;border-radius:4px;background:#fffbeb;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    </div>
+                    <span style="font-size:12.5px;color:var(--t2)">智能电表模型</span>
+                  </div>
+                </td>
+                <td><span class="proto-tag proto-modbus">Modbus</span></td>
+                <td style="font-family:var(--font-m);font-size:12px">2024-03-05</td>
+                <td><div class="row-acts" style="opacity:1;gap:5px">
+                  <button class="rbtn">查看</button>
+                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="dev-cell">
+                    <div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+                    <div><div class="dev-name">高压管道压力计</div><div class="dev-id">设备接入产品</div></div>
+                  </div>
+                </td>
+                <td><span class="code-tag">prod_pressure_hp</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <div style="width:18px;height:18px;border-radius:4px;background:#fef2f2;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    </div>
+                    <span style="font-size:12.5px;color:var(--t2)">工业压力传感器模型</span>
+                  </div>
+                </td>
+                <td><span class="proto-tag proto-http">HTTP</span></td>
+                <td style="font-family:var(--font-m);font-size:12px">2024-03-22</td>
+                <td><div class="row-acts" style="opacity:1;gap:5px">
+                  <button class="rbtn">查看</button>
+                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="dev-cell">
+                    <div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                    <div><div class="dev-name">楼宇智能控制网关</div><div class="dev-id">设备接入产品</div></div>
+                  </div>
+                </td>
+                <td><span class="code-tag">prod_building_gw</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <div style="width:18px;height:18px;border-radius:4px;background:#f5f3ff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                    <span style="font-size:12.5px;color:var(--t2)">楼宇控制器模型</span>
+                  </div>
+                </td>
+                <td><span class="proto-tag proto-mqtt">MQTT</span></td>
+                <td style="font-family:var(--font-m);font-size:12px">2024-04-08</td>
+                <td><div class="row-acts" style="opacity:1;gap:5px">
+                  <button class="rbtn">查看</button>
+                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="dev-cell">
+                    <div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div>
+                    <div><div class="dev-name">冷链运输温湿度计</div><div class="dev-id">设备接入产品</div></div>
+                  </div>
+                </td>
+                <td><span class="code-tag">prod_coldchain_th</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <div style="width:18px;height:18px;border-radius:4px;background:#eff4ff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <span style="font-size:12.5px;color:var(--t2)">温湿度传感器模型</span>
+                  </div>
+                </td>
+                <td><span class="proto-tag proto-coap">CoAP</span></td>
+                <td style="font-family:var(--font-m);font-size:12px">2024-05-14</td>
+                <td><div class="row-acts" style="opacity:1;gap:5px">
+                  <button class="rbtn">查看</button>
+                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="dev-cell">
+                    <div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+                    <div><div class="dev-name">光伏发电计量表</div><div class="dev-id">设备接入产品</div></div>
+                  </div>
+                </td>
+                <td><span class="code-tag">prod_pv_meter</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <div style="width:18px;height:18px;border-radius:4px;background:#fffbeb;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    </div>
+                    <span style="font-size:12.5px;color:var(--t2)">智能电表模型</span>
+                  </div>
+                </td>
+                <td><span class="proto-tag proto-modbus">Modbus</span></td>
+                <td style="font-family:var(--font-m);font-size:12px">2024-06-01</td>
+                <td><div class="row-acts" style="opacity:1;gap:5px">
+                  <button class="rbtn">查看</button>
+                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
+                </div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="dev-cell">
+                    <div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg></div>
+                    <div><div class="dev-name">地下停车场环境站</div><div class="dev-id">设备接入产品</div></div>
+                  </div>
+                </td>
+                <td><span class="code-tag">prod_parking_env</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <div style="width:18px;height:18px;border-radius:4px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg>
+                    </div>
+                    <span style="font-size:12.5px;color:var(--t2)">CO₂ 环境监测模型</span>
+                  </div>
+                </td>
+                <td><span class="proto-tag proto-http">HTTP</span></td>
+                <td style="font-family:var(--font-m);font-size:12px">2024-06-20</td>
+                <td><div class="row-acts" style="opacity:1;gap:5px">
+                  <button class="rbtn">查看</button>
+                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
+                </div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-foot">
+          <span class="tcount">共 8 个产品</span>
+          <div class="pager">
+            <button class="pgbtn">‹</button>
+            <button class="pgbtn active">1</button>
+            <button class="pgbtn">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 添加产品弹窗 ══ -->
+    <div class="modal-mask" id="add-product-modal" onclick="closeModal('add-product-modal')">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <span class="modal-title">添加产品</span>
+          <button class="modal-close" onclick="closeModal('add-product-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <label class="form-label">产品名称 <span class="req">*</span></label>
+            <input class="form-input" type="text" placeholder="请输入产品名称">
+          </div>
+          <div class="form-row">
+            <label class="form-label">唯一标识符 <span class="req">*</span></label>
+            <input class="form-input" type="text" placeholder="如：prod_temperature_sensor">
+            <div class="form-hint">只能包含字母、数字和下划线</div>
+          </div>
+          <div class="form-row two-col">
+            <div>
+              <label class="form-label">绑定物模型 <span class="req">*</span></label>
+              <select class="form-input">
+                <option value="">请选择物模型</option>
+                <option>温湿度传感器模型</option>
+                <option>CO₂ 环境监测模型</option>
+                <option>智能电表模型</option>
+                <option>工业压力传感器模型</option>
+                <option>楼宇控制器模型</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">通信协议 <span class="req">*</span></label>
+              <select class="form-input">
+                <option>MQTT</option>
+                <option>HTTP</option>
+                <option>CoAP</option>
+                <option>Modbus</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-ghost" onclick="closeModal('add-product-modal')">取消</button>
+          <button class="btn btn-primary">确认添加</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const pages = {
+    workbench: 'page-workbench',
+    tsl:       'page-tsl',
+    products:  'page-products',
+    devices:   'page-devices',
+  };
+
+  function switchPage(pageKey) {
+    Object.values(pages).forEach(id => {
+      document.getElementById(id).classList.remove('active');
+    });
+    document.getElementById(pages[pageKey]).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.querySelector(`[data-page="${pageKey}"]`).classList.add('active');
+  }
+
+  document.querySelectorAll('.nav-item[data-page]').forEach(el => {
+    el.addEventListener('click', () => switchPage(el.dataset.page));
+  });
+
+  function selectModel(el, detailId) {
+    document.querySelectorAll('.tsl-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.tsl-detail').forEach(d => d.classList.remove('tsl-detail-active'));
+    document.getElementById(detailId).classList.add('tsl-detail-active');
+  }
+
+  function switchTab(btn, panelId) {
+    const detail = btn.closest('.tsl-detail');
+    detail.querySelectorAll('.prop-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    detail.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active-tab'));
+    const panel = document.getElementById(panelId);
+    if (panel) panel.classList.add('active-tab');
+  }
+
+  function setWizardStep(modalId, step) {
+    const mask = document.getElementById(modalId);
+    mask.dataset.step = String(step);
+
+    mask.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+    const activeStep = mask.querySelector(`.wizard-step[data-step="${step}"]`);
+    if (activeStep) activeStep.classList.add('active');
+
+    mask.querySelectorAll('.wizard-stepper').forEach(s => {
+      s.classList.toggle('active', s.dataset.step === String(step));
+    });
+
+    mask.querySelectorAll('.wizard-step-btn').forEach(btn => {
+      const showOn = btn.dataset.showOn;
+      btn.style.display = !showOn || showOn === String(step) ? '' : 'none';
+    });
+  }
+
+  function wizardNext(modalId) { setWizardStep(modalId, 2); }
+  function wizardPrev(modalId) { setWizardStep(modalId, 1); }
+
+  function switchWizardTab(btn, panelId) {
+    const modal = btn.closest('.modal');
+    modal.querySelectorAll('.wizard-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    modal.querySelectorAll('.wizard-panel').forEach(p => p.classList.remove('active'));
+    const panel = modal.querySelector(`#${panelId}`);
+    if (panel) panel.classList.add('active');
+  }
+
+  function openModal(id) {
+    const mask = document.getElementById(id);
+    mask.classList.add('open');
+    if (id === 'add-model-modal') setWizardStep(id, 1);
+  }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+</script>
+
+</body>
+</html>
