@@ -248,10 +248,79 @@
     display:flex; align-items:center; justify-content:space-between;
     padding:14px 18px; border-bottom:1px solid var(--border);
   }
+  .card-hdr-left { display:flex; align-items:center; gap:10px; }
+  .card-hdr-right { display:flex; align-items:center; gap:10px; }
   .card-title { font-size:14px; font-weight:600; color:var(--t1); }
   .card-meta  { font-size:12px; color:var(--t3); }
   .card-link  { font-size:12px; color:var(--accent); cursor:pointer; }
   .card-link:hover { text-decoration:underline; }
+  .icon-btn {
+    width:28px; height:28px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--surface);
+    color:var(--t2);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition:all .15s;
+  }
+  .icon-btn:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-lt); }
+  .icon-picker-row { display:flex; gap:12px; align-items:flex-start; }
+  .upload-box {
+    position:relative;
+    width:220px;
+    min-height:110px;
+    border:1px dashed var(--border);
+    border-radius:var(--r-sm);
+    background:var(--surface-2);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:10px;
+  }
+  .upload-box input {
+    position:absolute;
+    inset:0;
+    opacity:0;
+    cursor:pointer;
+  }
+  .upload-preview {
+    width:48px; height:48px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--t3);
+  }
+  .upload-preview img { width:100%; height:100%; object-fit:cover; border-radius:10px; }
+  .upload-text { font-size:12px; color:var(--t1); font-weight:500; }
+  .upload-sub { font-size:11px; color:var(--t3); }
+  .icon-picker {
+    width:180px;
+    border:1px solid var(--border);
+    border-radius:var(--r-sm);
+    background:var(--surface-2);
+    padding:8px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+  }
+  .icon-option {
+    width:48px; height:48px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--t2);
+    cursor:pointer;
+    transition:all .15s;
+  }
+  .icon-option:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-lt); }
+  .icon-option.selected { border-color:var(--accent); background:var(--accent-lt); color:var(--accent); box-shadow:0 0 0 2px rgba(37,99,235,.12); }
 
   /* Filter */
   .filter-bar { display:flex; gap:8px; padding:10px 18px; background:var(--surface-2); border-bottom:1px solid var(--border); }
@@ -398,6 +467,16 @@
   .tsl-detail { display:none; flex-direction:column; overflow:hidden; min-height:0; }
   .tsl-detail.tsl-detail-active { display:flex; }
 
+  .tsl-detail-top { display:grid; grid-template-columns:220px 1fr; gap:16px; padding:16px 18px; }
+  .tsl-detail-icon { width:72px; height:72px; border-radius:16px; background:var(--accent-lt); display:flex; align-items:center; justify-content:center; box-shadow:var(--sh-xs); }
+  .tsl-detail-title { font-size:18px; font-weight:600; color:var(--t1); }
+  .tsl-detail-desc { font-size:12.5px; color:var(--t3); margin-top:6px; }
+  .tsl-detail-meta { display:flex; align-items:center; gap:8px; margin-top:8px; }
+  .tsl-detail-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:12px; }
+  .tsl-detail-item { background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
+  .tsl-detail-label { font-size:11px; color:var(--t3); margin-bottom:6px; }
+  .tsl-detail-value { font-size:13px; color:var(--t1); font-family:var(--font-m); }
+
   .tab-panel { display:none; flex-direction:column; flex:1; overflow:auto; }
   .tab-panel.active-tab { display:flex; }
 
@@ -496,41 +575,74 @@
   .modal.modal-wide { width:860px; }
   @media (max-width: 920px) { .modal.modal-wide { width:92vw; } }
 
-  .wizard-steps { display:flex; gap:10px; position:relative; }
-  .wizard-steps::before {
-    content:"";
-    position:absolute;
-    left:18px; right:18px;
-    top:50%;
-    height:2px;
-    background:var(--border);
-    transform:translateY(-50%);
-  }
+  .wizard-steps { display:flex; gap:0; padding:0 4px; }
   .wizard-stepper {
-    display:flex; align-items:center; gap:8px;
-    padding:7px 10px;
-    border-radius:999px;
-    border:1px solid var(--border);
-    background:var(--surface-2);
-    color:var(--t2);
-    font-size:12.5px;
-    font-weight:500;
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:10px;
     flex:1;
     min-width:0;
+    padding:0 14px 0 0;
+    background:transparent;
+    border:none;
+    color:var(--t3);
+    font-size:12.5px;
+    font-weight:500;
+  }
+  .wizard-stepper:last-child { padding-right:0; }
+  .wizard-stepper::after {
+    content:"";
+    position:absolute;
+    left:28px;
+    right:0;
+    top:14px;
+    height:1px;
+    background:var(--border);
+    z-index:0;
+  }
+  .wizard-stepper:last-child::after { display:none; }
+  .wizard-stepper.completed::after { background:rgba(37,99,235,.55); }
+  .wizard-stepper-num {
+    width:28px;
+    height:28px;
+    border-radius:999px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:var(--font-m);
+    font-size:12px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--t3);
+    flex-shrink:0;
+    box-shadow:var(--sh-xs);
     position:relative;
     z-index:1;
   }
-  .wizard-stepper.active { background:var(--accent-lt); border-color:rgba(37,99,235,.35); color:var(--accent); }
-  .wizard-stepper-num {
-    width:18px; height:18px;
-    border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-family:var(--font-m); font-size:11px;
-    background:var(--border); color:var(--t2);
-    flex-shrink:0;
+  .wizard-stepper-text {
+    line-height:28px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:var(--t3);
+    position:relative;
+    z-index:1;
   }
-  .wizard-stepper.active .wizard-stepper-num { background:var(--accent); color:#fff; }
-  .wizard-stepper-text { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .wizard-stepper.active .wizard-stepper-num {
+    border-color:var(--accent);
+    color:var(--accent);
+  }
+  .wizard-stepper.active .wizard-stepper-text { color:var(--t1); font-weight:600; }
+  .wizard-stepper.completed .wizard-stepper-num {
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+
+  #add-model-modal .modal-body { padding:14px 18px; gap:12px; }
+  #add-model-modal .wizard-step { gap:10px; }
+  #add-model-modal .form-input { padding:7px 10px; font-size:12.5px; }
 
   .wizard-step { display:none; flex-direction:column; gap:14px; }
   .wizard-step.active { display:flex; }
@@ -832,27 +944,17 @@
             <input class="form-input" type="text" placeholder="如：DEV-2024-001" style="font-family:var(--font-m);font-size:12px">
             <div class="form-hint">建议使用统一命名规则，便于检索与管理</div>
           </div>
-          <div class="form-row two-col">
-            <div>
-              <label class="form-label">所属产品 <span class="req">*</span></label>
-              <select class="form-input">
-                <option value="">请选择产品</option>
-                <option>温湿度传感器</option>
-                <option>智能网关</option>
-                <option>电力计量</option>
-                <option>环境监测</option>
-                <option>楼宇自控</option>
-                <option>工业压力</option>
-              </select>
-            </div>
-            <div>
-              <label class="form-label">初始状态</label>
-              <select class="form-input">
-                <option>在线</option>
-                <option>离线</option>
-                <option>空闲</option>
-              </select>
-            </div>
+          <div class="form-row">
+            <label class="form-label">所属产品 <span class="req">*</span></label>
+            <select class="form-input">
+              <option value="">请选择产品</option>
+              <option>温湿度传感器</option>
+              <option>智能网关</option>
+              <option>电力计量</option>
+              <option>环境监测</option>
+              <option>楼宇自控</option>
+              <option>工业压力</option>
+            </select>
           </div>
           <div class="form-row">
             <label class="form-label">备注</label>
@@ -918,7 +1020,8 @@
                 <td><span class="nav-badge" style="margin:0">6</span></td>
                 <td style="font-family:var(--font-m);font-size:12px">2024-01-10</td>
                 <td><div class="row-acts" style="opacity:1;gap:5px">
-                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" onclick="openTslDetail()">详情</button>
+                  <button class="rbtn" onclick="openModal('edit-model-modal')">编辑</button>
                   <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
                 </div></td>
               </tr>
@@ -936,7 +1039,8 @@
                 <td><span class="nav-badge" style="margin:0">4</span></td>
                 <td style="font-family:var(--font-m);font-size:12px">2024-02-15</td>
                 <td><div class="row-acts" style="opacity:1;gap:5px">
-                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" onclick="openTslDetail()">详情</button>
+                  <button class="rbtn" onclick="openModal('edit-model-modal')">编辑</button>
                   <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
                 </div></td>
               </tr>
@@ -954,7 +1058,8 @@
                 <td><span class="nav-badge" style="margin:0">5</span></td>
                 <td style="font-family:var(--font-m);font-size:12px">2024-03-01</td>
                 <td><div class="row-acts" style="opacity:1;gap:5px">
-                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" onclick="openTslDetail()">详情</button>
+                  <button class="rbtn" onclick="openModal('edit-model-modal')">编辑</button>
                   <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
                 </div></td>
               </tr>
@@ -972,7 +1077,8 @@
                 <td><span class="nav-badge" style="margin:0">3</span></td>
                 <td style="font-family:var(--font-m);font-size:12px">2024-03-20</td>
                 <td><div class="row-acts" style="opacity:1;gap:5px">
-                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" onclick="openTslDetail()">详情</button>
+                  <button class="rbtn" onclick="openModal('edit-model-modal')">编辑</button>
                   <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
                 </div></td>
               </tr>
@@ -990,7 +1096,8 @@
                 <td><span class="nav-badge" style="margin:0">7</span></td>
                 <td style="font-family:var(--font-m);font-size:12px">2024-04-05</td>
                 <td><div class="row-acts" style="opacity:1;gap:5px">
-                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" onclick="openTslDetail()">详情</button>
+                  <button class="rbtn" onclick="openModal('edit-model-modal')">编辑</button>
                   <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
                 </div></td>
               </tr>
@@ -1003,6 +1110,166 @@
             <button class="pgbtn">‹</button>
             <button class="pgbtn active">1</button>
             <button class="pgbtn">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-tsl-detail" class="page">
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-hdr-left">
+            <button class="icon-btn" onclick="switchPage('tsl')" aria-label="返回">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="card-title">物模型信息</span>
+          </div>
+          <div class="card-hdr-right">
+            <span class="card-meta">最近更新：2024-06-01 14:32</span>
+            <button class="icon-btn" onclick="openModal('edit-model-modal')" aria-label="编辑物模型">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="tsl-detail-top">
+          <div class="tsl-detail-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <div class="tsl-detail-title">温湿度传感器模型</div>
+            <div class="tsl-detail-meta">
+              <span class="code-tag">thm_temperature_humidity</span>
+              <span class="proto-tag proto-mqtt">MQTT</span>
+            </div>
+            <div class="tsl-detail-desc">温湿度一体传感器数据模型，包含基础环境数据与告警扩展字段</div>
+            <div class="tsl-detail-grid">
+              <div class="tsl-detail-item">
+                <div class="tsl-detail-label">属性数量</div>
+                <div class="tsl-detail-value">6</div>
+              </div>
+              <div class="tsl-detail-item">
+                <div class="tsl-detail-label">创建时间</div>
+                <div class="tsl-detail-value">2024-01-10</div>
+              </div>
+              <div class="tsl-detail-item">
+                <div class="tsl-detail-label">绑定产品</div>
+                <div class="tsl-detail-value">3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="flex:1;min-height:0">
+        <div class="card-hdr">
+          <span class="card-title">物模型能力</span>
+          <span class="card-meta">共 6 项</span>
+        </div>
+        <div class="prop-tabs">
+          <button class="prop-tab active" onclick="switchDetailTab(this,'tsl-detail-props')">属性 <span class="tab-count">4</span></button>
+          <button class="prop-tab" onclick="switchDetailTab(this,'tsl-detail-funcs')">功能 <span class="tab-count">1</span></button>
+          <button class="prop-tab" onclick="switchDetailTab(this,'tsl-detail-events')">事件 <span class="tab-count">1</span></button>
+        </div>
+        <div id="tsl-detail-props" class="tab-panel active-tab">
+          <div style="flex:1;overflow:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Key</th>
+                  <th>名称</th>
+                  <th>数据类型</th>
+                  <th>单位</th>
+                  <th>来源</th>
+                  <th>表达式</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="code-tag">temperature</span></td>
+                  <td style="color:var(--t2)">温度</td>
+                  <td><span class="dtype-tag dtype-float">float</span></td>
+                  <td style="font-family:var(--font-m);font-size:12px;color:var(--t2)">℃</td>
+                  <td><span class="code-tag src-raw">raw</span></td>
+                  <td style="color:var(--t3);font-size:12px">—</td>
+                </tr>
+                <tr>
+                  <td><span class="code-tag">humidity</span></td>
+                  <td style="color:var(--t2)">湿度</td>
+                  <td><span class="dtype-tag dtype-float">float</span></td>
+                  <td style="font-family:var(--font-m);font-size:12px;color:var(--t2)">%</td>
+                  <td><span class="code-tag src-raw">raw</span></td>
+                  <td style="color:var(--t3);font-size:12px">—</td>
+                </tr>
+                <tr>
+                  <td><span class="code-tag">temp_f</span></td>
+                  <td style="color:var(--t2)">华氏温度</td>
+                  <td><span class="dtype-tag dtype-float">float</span></td>
+                  <td style="font-family:var(--font-m);font-size:12px;color:var(--t2)">℉</td>
+                  <td><span class="code-tag src-formula">formula</span></td>
+                  <td style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">temperature * 1.8 + 32</td>
+                </tr>
+                <tr>
+                  <td><span class="code-tag">battery</span></td>
+                  <td style="color:var(--t2)">电量</td>
+                  <td><span class="dtype-tag dtype-int">int</span></td>
+                  <td style="font-family:var(--font-m);font-size:12px;color:var(--t2)">%</td>
+                  <td><span class="code-tag src-raw">raw</span></td>
+                  <td style="color:var(--t3);font-size:12px">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div id="tsl-detail-funcs" class="tab-panel">
+          <div style="flex:1;overflow:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Key</th>
+                  <th>名称</th>
+                  <th>数据类型</th>
+                  <th>单位</th>
+                  <th>来源</th>
+                  <th>表达式</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="code-tag">set_report_interval</span></td>
+                  <td style="color:var(--t2)">设置上报周期</td>
+                  <td><span class="dtype-tag dtype-int">int</span></td>
+                  <td style="font-family:var(--font-m);font-size:12px;color:var(--t2)">s</td>
+                  <td><span class="code-tag src-raw">raw</span></td>
+                  <td style="color:var(--t3);font-size:12px">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div id="tsl-detail-events" class="tab-panel">
+          <div style="flex:1;overflow:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Key</th>
+                  <th>名称</th>
+                  <th>数据类型</th>
+                  <th>单位</th>
+                  <th>来源</th>
+                  <th>表达式</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="code-tag">over_threshold</span></td>
+                  <td style="color:var(--t2)">超阈值告警</td>
+                  <td><span class="dtype-tag dtype-bool">bool</span></td>
+                  <td style="color:var(--t3);font-size:12px">—</td>
+                  <td><span class="code-tag src-raw">raw</span></td>
+                  <td style="color:var(--t3);font-size:12px">—</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -1041,11 +1308,41 @@
             </div>
             <div class="form-row">
               <label class="form-label">描述</label>
-              <textarea class="form-input" rows="3" placeholder="对应 thing_model.description（可选）"></textarea>
+              <textarea class="form-input" rows="2" placeholder="对应 thing_model.description（可选）"></textarea>
             </div>
             <div class="form-row">
               <label class="form-label">图标</label>
-              <textarea class="form-input" rows="3" placeholder="对应 thing_model.icon（可选：SVG / Base64 / URL）"></textarea>
+              <div class="icon-picker-row">
+                <div class="upload-box">
+                  <input id="model-icon-file" type="file" accept="image/*,.svg" onchange="onModelIconUpload(this)">
+                  <div id="model-icon-preview" class="upload-preview">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                  </div>
+                  <div class="upload-text">上传图标</div>
+                  <div class="upload-sub">支持 SVG/PNG/JPG</div>
+                </div>
+                <input id="model-icon-input" type="hidden">
+                <div class="icon-picker">
+                  <button class="icon-option selected" data-icon="sensor" onclick="selectModelIcon(this)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg>
+                  </button>
+                  <button class="icon-option" data-icon="gateway" onclick="selectModelIcon(this)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  </button>
+                  <button class="icon-option" data-icon="meter" onclick="selectModelIcon(this)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                  </button>
+                  <button class="icon-option" data-icon="chip" onclick="selectModelIcon(this)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/></svg>
+                  </button>
+                  <button class="icon-option" data-icon="alarm" onclick="selectModelIcon(this)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="8"/></svg>
+                  </button>
+                  <button class="icon-option" data-icon="fan" onclick="selectModelIcon(this)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M12 2c2 2 2 6 0 8"/><path d="M22 12c-2 2-6 2-8 0"/><path d="M12 22c-2-2-2-6 0-8"/><path d="M2 12c2-2 6-2 8 0"/></svg>
+                  </button>
+                </div>
+              </div>
               <div class="form-hint">用于列表展示，支持粘贴 SVG/URL/Base64</div>
             </div>
           </div>
@@ -1065,7 +1362,7 @@
                   添加属性
                 </button>
               </div>
-              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:240px;overflow:auto">
+              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:200px;overflow:auto">
                 <table>
                   <thead>
                     <tr>
@@ -1103,14 +1400,13 @@
             </div>
 
             <div id="wizard-funcs" class="wizard-panel">
-              <div style="display:flex;align-items:center;justify-content:space-between">
-                <div style="font-size:13px;font-weight:600;color:var(--t1)">功能列表</div>
-                <button class="btn btn-ghost" style="padding:6px 10px" onclick="openModal('add-prop-modal')">
+              <div style="display:flex;align-items:center;gap:8px">
+                <button class="btn btn-ghost" style="padding:6px 8px" onclick="openModal('add-prop-modal')" aria-label="添加功能">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  添加功能
                 </button>
+                <div style="font-size:13px;font-weight:600;color:var(--t1)">功能列表</div>
               </div>
-              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:240px;overflow:auto">
+              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:200px;overflow:auto">
                 <table>
                   <thead>
                     <tr>
@@ -1146,7 +1442,7 @@
                   添加事件
                 </button>
               </div>
-              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:240px;overflow:auto">
+              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:200px;overflow:auto">
                 <table>
                   <thead>
                     <tr>
@@ -1180,6 +1476,41 @@
           <button class="btn btn-primary wizard-step-btn" data-show-on="1" onclick="wizardNext('add-model-modal')">下一步</button>
           <button class="btn btn-ghost wizard-step-btn" data-show-on="2" onclick="wizardPrev('add-model-modal')">上一步</button>
           <button class="btn btn-primary wizard-step-btn" data-show-on="2">确认添加</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-mask" id="edit-model-modal" onclick="closeModal('edit-model-modal')">
+      <div class="modal modal-wide" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <span class="modal-title">编辑物模型</span>
+          <button class="modal-close" onclick="closeModal('edit-model-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row two-col">
+            <div>
+              <label class="form-label">模型名称 <span class="req">*</span></label>
+              <input class="form-input" type="text" value="温湿度传感器模型">
+            </div>
+            <div>
+              <label class="form-label">模型标识符 <span class="req">*</span></label>
+              <input class="form-input" type="text" value="thm_temperature_humidity" style="font-family:var(--font-m);font-size:12px">
+              <div class="form-hint">只能包含字母、数字和下划线</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">描述</label>
+            <textarea class="form-input" rows="2">温湿度一体传感器数据模型</textarea>
+          </div>
+          <div class="form-row">
+            <label class="form-label">图标</label>
+            <textarea class="form-input" rows="2" placeholder="可选：SVG / Base64 / URL"></textarea>
+            <div class="form-hint">用于列表展示，支持粘贴 SVG/URL/Base64</div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-ghost" onclick="closeModal('edit-model-modal')">取消</button>
+          <button class="btn btn-primary">保存</button>
         </div>
       </div>
     </div>
@@ -1307,8 +1638,8 @@
                 <td><span class="proto-tag proto-mqtt">MQTT</span></td>
                 <td style="font-family:var(--font-m);font-size:12px">2024-01-12</td>
                 <td><div class="row-acts" style="opacity:1;gap:5px">
-                  <button class="rbtn">查看</button>
-                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" onclick="openModal('view-product-modal')">查看</button>
+                  <button class="rbtn" onclick="openModal('edit-product-modal')">编辑</button>
                   <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
                 </div></td>
               </tr>
@@ -1331,8 +1662,8 @@
                 <td><span class="proto-tag proto-mqtt">MQTT</span></td>
                 <td style="font-family:var(--font-m);font-size:12px">2024-02-18</td>
                 <td><div class="row-acts" style="opacity:1;gap:5px">
-                  <button class="rbtn">查看</button>
-                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" onclick="openModal('view-product-modal')">查看</button>
+                  <button class="rbtn" onclick="openModal('edit-product-modal')">编辑</button>
                   <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
                 </div></td>
               </tr>
@@ -1355,8 +1686,8 @@
                 <td><span class="proto-tag proto-modbus">Modbus</span></td>
                 <td style="font-family:var(--font-m);font-size:12px">2024-03-05</td>
                 <td><div class="row-acts" style="opacity:1;gap:5px">
-                  <button class="rbtn">查看</button>
-                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" onclick="openModal('view-product-modal')">查看</button>
+                  <button class="rbtn" onclick="openModal('edit-product-modal')">编辑</button>
                   <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
                 </div></td>
               </tr>
@@ -1379,8 +1710,8 @@
                 <td><span class="proto-tag proto-http">HTTP</span></td>
                 <td style="font-family:var(--font-m);font-size:12px">2024-03-22</td>
                 <td><div class="row-acts" style="opacity:1;gap:5px">
-                  <button class="rbtn">查看</button>
-                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" onclick="openModal('view-product-modal')">查看</button>
+                  <button class="rbtn" onclick="openModal('edit-product-modal')">编辑</button>
                   <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
                 </div></td>
               </tr>
@@ -1403,8 +1734,8 @@
                 <td><span class="proto-tag proto-mqtt">MQTT</span></td>
                 <td style="font-family:var(--font-m);font-size:12px">2024-04-08</td>
                 <td><div class="row-acts" style="opacity:1;gap:5px">
-                  <button class="rbtn">查看</button>
-                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" onclick="openModal('view-product-modal')">查看</button>
+                  <button class="rbtn" onclick="openModal('edit-product-modal')">编辑</button>
                   <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
                 </div></td>
               </tr>
@@ -1427,8 +1758,8 @@
                 <td><span class="proto-tag proto-coap">CoAP</span></td>
                 <td style="font-family:var(--font-m);font-size:12px">2024-05-14</td>
                 <td><div class="row-acts" style="opacity:1;gap:5px">
-                  <button class="rbtn">查看</button>
-                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" onclick="openModal('view-product-modal')">查看</button>
+                  <button class="rbtn" onclick="openModal('edit-product-modal')">编辑</button>
                   <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
                 </div></td>
               </tr>
@@ -1451,8 +1782,8 @@
                 <td><span class="proto-tag proto-modbus">Modbus</span></td>
                 <td style="font-family:var(--font-m);font-size:12px">2024-06-01</td>
                 <td><div class="row-acts" style="opacity:1;gap:5px">
-                  <button class="rbtn">查看</button>
-                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" onclick="openModal('view-product-modal')">查看</button>
+                  <button class="rbtn" onclick="openModal('edit-product-modal')">编辑</button>
                   <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
                 </div></td>
               </tr>
@@ -1475,8 +1806,8 @@
                 <td><span class="proto-tag proto-http">HTTP</span></td>
                 <td style="font-family:var(--font-m);font-size:12px">2024-06-20</td>
                 <td><div class="row-acts" style="opacity:1;gap:5px">
-                  <button class="rbtn">查看</button>
-                  <button class="rbtn">编辑</button>
+                  <button class="rbtn" onclick="openModal('view-product-modal')">查看</button>
+                  <button class="rbtn" onclick="openModal('edit-product-modal')">编辑</button>
                   <button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button>
                 </div></td>
               </tr>
@@ -1541,6 +1872,87 @@
       </div>
     </div>
 
+    <div class="modal-mask" id="view-product-modal" onclick="closeModal('view-product-modal')">
+      <div class="modal modal-wide" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <span class="modal-title">查看产品</span>
+          <button class="modal-close" onclick="closeModal('view-product-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <label class="form-label">产品名称</label>
+            <input class="form-input" type="text" value="仓储温湿度传感器" readonly>
+          </div>
+          <div class="form-row">
+            <label class="form-label">唯一标识符</label>
+            <input class="form-input" type="text" value="prod_warehouse_th" readonly>
+          </div>
+          <div class="form-row two-col">
+            <div>
+              <label class="form-label">绑定物模型</label>
+              <input class="form-input" type="text" value="温湿度传感器模型" readonly>
+            </div>
+            <div>
+              <label class="form-label">通信协议</label>
+              <input class="form-input" type="text" value="MQTT" readonly>
+            </div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">创建时间</label>
+            <input class="form-input" type="text" value="2024-01-12" readonly>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-ghost" onclick="closeModal('view-product-modal')">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-mask" id="edit-product-modal" onclick="closeModal('edit-product-modal')">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <span class="modal-title">编辑产品</span>
+          <button class="modal-close" onclick="closeModal('edit-product-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <label class="form-label">产品名称 <span class="req">*</span></label>
+            <input class="form-input" type="text" value="仓储温湿度传感器">
+          </div>
+          <div class="form-row">
+            <label class="form-label">唯一标识符 <span class="req">*</span></label>
+            <input class="form-input" type="text" value="prod_warehouse_th">
+            <div class="form-hint">只能包含字母、数字和下划线</div>
+          </div>
+          <div class="form-row two-col">
+            <div>
+              <label class="form-label">绑定物模型 <span class="req">*</span></label>
+              <select class="form-input">
+                <option>温湿度传感器模型</option>
+                <option>CO₂ 环境监测模型</option>
+                <option>智能电表模型</option>
+                <option>工业压力传感器模型</option>
+                <option>楼宇控制器模型</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">通信协议 <span class="req">*</span></label>
+              <select class="form-input">
+                <option>MQTT</option>
+                <option>HTTP</option>
+                <option>CoAP</option>
+                <option>Modbus</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-ghost" onclick="closeModal('edit-product-modal')">取消</button>
+          <button class="btn btn-primary">保存</button>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -1548,6 +1960,7 @@
   const pages = {
     workbench: 'page-workbench',
     tsl:       'page-tsl',
+    tslDetail: 'page-tsl-detail',
     products:  'page-products',
     devices:   'page-devices',
   };
@@ -1558,7 +1971,8 @@
     });
     document.getElementById(pages[pageKey]).classList.add('active');
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    document.querySelector(`[data-page="${pageKey}"]`).classList.add('active');
+    const navItem = document.querySelector(`[data-page="${pageKey}"]`);
+    if (navItem) navItem.classList.add('active');
   }
 
   document.querySelectorAll('.nav-item[data-page]').forEach(el => {
@@ -1581,6 +1995,68 @@
     if (panel) panel.classList.add('active-tab');
   }
 
+  function switchDetailTab(btn, panelId) {
+    const page = document.getElementById('page-tsl-detail');
+    page.querySelectorAll('.prop-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    page.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active-tab'));
+    const panel = document.getElementById(panelId);
+    if (panel) panel.classList.add('active-tab');
+  }
+
+  const modelIconMap = {
+    sensor: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg>',
+    gateway: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+    meter: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>',
+    chip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/></svg>',
+    alarm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="8"/></svg>',
+    fan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M12 2c2 2 2 6 0 8"/><path d="M22 12c-2 2-6 2-8 0"/><path d="M12 22c-2-2-2-6 0-8"/><path d="M2 12c2-2 6-2 8 0"/></svg>',
+  };
+
+  function selectModelIcon(btn) {
+    const picker = btn.closest('.icon-picker');
+    if (!picker) return;
+    picker.querySelectorAll('.icon-option').forEach(item => item.classList.remove('selected'));
+    btn.classList.add('selected');
+    const input = document.getElementById('model-icon-input');
+    const svg = modelIconMap[btn.dataset.icon];
+    const preview = document.getElementById('model-icon-preview');
+    if (input && svg) input.value = svg;
+    if (preview && svg) preview.innerHTML = svg;
+    const fileInput = document.getElementById('model-icon-file');
+    if (fileInput) fileInput.value = '';
+  }
+
+  function onModelIconUpload(input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const preview = document.getElementById('model-icon-preview');
+    const hidden = document.getElementById('model-icon-input');
+    const picker = input.closest('.icon-picker-row')?.querySelector('.icon-picker');
+    if (picker) picker.querySelectorAll('.icon-option').forEach(item => item.classList.remove('selected'));
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (!preview) return;
+      if (file.type === 'image/svg+xml' && typeof result === 'string') {
+        preview.innerHTML = result;
+        if (hidden) hidden.value = result;
+        return;
+      }
+      if (typeof result === 'string') {
+        preview.innerHTML = `<img src="${result}" alt="icon">`;
+        if (hidden) hidden.value = result;
+      }
+    };
+    if (file.type === 'image/svg+xml') {
+      reader.readAsText(file);
+    } else {
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function openTslDetail() { switchPage('tslDetail'); }
+
   function setWizardStep(modalId, step) {
     const mask = document.getElementById(modalId);
     mask.dataset.step = String(step);
@@ -1589,8 +2065,11 @@
     const activeStep = mask.querySelector(`.wizard-step[data-step="${step}"]`);
     if (activeStep) activeStep.classList.add('active');
 
+    const currentStep = Number(step);
     mask.querySelectorAll('.wizard-stepper').forEach(s => {
-      s.classList.toggle('active', s.dataset.step === String(step));
+      const sStep = Number(s.dataset.step || '0');
+      s.classList.toggle('active', sStep === currentStep);
+      s.classList.toggle('completed', sStep > 0 && sStep < currentStep);
     });
 
     mask.querySelectorAll('.wizard-step-btn').forEach(btn => {
