@@ -711,6 +711,455 @@
   @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
   .stats-grid { animation:fadeUp .4s ease .05s both; }
   .wb-grid    { animation:fadeUp .4s ease .18s both; }
+
+  /* ═══════════════════════════ 设备详情页面 ═══════════════════════════ */
+  .device-detail-header {
+    display:grid;
+    grid-template-columns: 1fr 280px;
+    gap:24px;
+    padding:18px;
+    background:var(--surface-2);
+    border-radius:var(--r);
+    margin-top:12px;
+  }
+
+  .device-detail-left {
+    display:flex;
+    gap:16px;
+    align-items:flex-start;
+  }
+
+  .device-icon-large {
+    width:72px;
+    height:72px;
+    border-radius:16px;
+    background:var(--accent-lt);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    box-shadow:var(--sh-xs);
+  }
+
+  .device-icon-large svg {
+    width:32px;
+    height:32px;
+    color:var(--accent);
+  }
+
+  .device-info {
+    flex:1;
+    min-width:0;
+  }
+
+  .device-name {
+    font-size:20px;
+    font-weight:600;
+    color:var(--t1);
+    margin-bottom:8px;
+  }
+
+  .device-meta {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:8px;
+  }
+
+  .device-desc {
+    font-size:13px;
+    color:var(--t3);
+    line-height:1.5;
+  }
+
+  .device-detail-right {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    align-content:start;
+  }
+
+  .device-stat-item {
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--r-sm);
+    padding:12px;
+    text-align:center;
+  }
+
+  .device-stat-label {
+    font-size:11px;
+    color:var(--t3);
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    margin-bottom:6px;
+  }
+
+  .device-stat-value {
+    font-family:var(--font-d);
+    font-size:20px;
+    font-weight:700;
+    color:var(--t1);
+    letter-spacing:0.5px;
+  }
+
+  .device-properties-section {
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--r);
+    padding:18px;
+    box-shadow:var(--sh-sm);
+  }
+
+  .section-header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:16px;
+    padding-bottom:12px;
+    border-bottom:1px solid var(--border);
+  }
+
+  .section-title {
+    font-size:15px;
+    font-weight:600;
+    color:var(--t1);
+  }
+
+  .section-count {
+    font-size:12px;
+    color:var(--t3);
+    font-family:var(--font-m);
+  }
+
+  .properties-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:14px;
+  }
+
+  .device-address-section {
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--r);
+    padding:18px;
+    box-shadow:var(--sh-sm);
+  }
+
+  .address-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+    gap:14px;
+  }
+
+  .address-card {
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:var(--r-sm);
+    padding:16px;
+    transition:all .2s;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .address-card::before {
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:3px;
+    border-radius:var(--r-sm) var(--r-sm) 0 0;
+    background:var(--accent);
+  }
+
+  .address-card.uplink::before { background:linear-gradient(90deg,var(--accent),var(--accent-lt)); }
+  .address-card.downlink::before { background:linear-gradient(90deg,var(--green),var(--green-lt)); }
+
+  .address-card:hover {
+    box-shadow:var(--sh-md);
+    transform:translateY(-2px);
+  }
+
+  .address-header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px;
+  }
+
+  .address-type {
+    font-size:11px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    padding:3px 10px;
+    border-radius:20px;
+    background:var(--surface);
+    color:var(--t2);
+  }
+
+  .address-card.uplink .address-type { color:var(--accent); }
+  .address-card.downlink .address-type { color:var(--green); }
+
+  .address-icon {
+    width:28px;
+    height:28px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--surface);
+  }
+
+  .address-card.uplink .address-icon { border:1px solid var(--accent-lt); color:var(--accent); }
+  .address-card.downlink .address-icon { border:1px solid var(--green-lt); color:var(--green); }
+
+  .address-desc {
+    font-size:13px;
+    color:var(--t1);
+    font-weight:500;
+    margin-bottom:8px;
+    line-height:1.4;
+  }
+
+  .address-label {
+    font-size:11px;
+    color:var(--t3);
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    margin-bottom:4px;
+  }
+
+  .address-value {
+    font-family:var(--font-m);
+    font-size:12px;
+    color:var(--t2);
+    background:var(--surface);
+    padding:8px 10px;
+    border-radius:6px;
+    border:1px solid var(--border);
+    word-break:break-all;
+    line-height:1.5;
+  }
+
+  .properties-grid {
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:var(--r-sm);
+    padding:16px;
+    transition:all .2s;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .property-card::before {
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:3px;
+    border-radius:var(--r-sm) var(--r-sm) 0 0;
+    background:var(--accent);
+  }
+
+  .property-card.type-bool::before { background:var(--green); }
+  .property-card.type-int::before { background:var(--amber); }
+  .property-card.type-float::before { background:var(--accent); }
+
+  .property-card:hover {
+    box-shadow:var(--sh-md);
+    transform:translateY(-2px);
+  }
+
+  .property-header {
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    margin-bottom:12px;
+  }
+
+  .property-info {
+    flex:1;
+    min-width:0;
+  }
+
+  .property-name {
+    font-size:14px;
+    font-weight:600;
+    color:var(--t1);
+    margin-bottom:4px;
+  }
+
+  .property-key {
+    font-family:var(--font-m);
+    font-size:11px;
+    color:var(--t3);
+  }
+
+  .property-type-tag {
+    font-size:10px;
+    font-weight:600;
+    padding:2px 8px;
+    border-radius:20px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+  }
+
+  .ptype-bool { background:var(--green-bg); color:var(--green); }
+  .ptype-int { background:var(--amber-bg); color:var(--amber); }
+  .ptype-float { background:var(--accent-lt); color:var(--accent); }
+
+  .property-value {
+    font-family:var(--font-d);
+    font-size:28px;
+    font-weight:700;
+    color:var(--t1);
+    letter-spacing:0.5px;
+    margin-bottom:4px;
+    line-height:1;
+  }
+
+  .property-unit {
+    font-size:13px;
+    font-weight:500;
+    color:var(--t3);
+    vertical-align:middle;
+  }
+
+  .property-meta {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid var(--border);
+    font-size:11px;
+    color:var(--t3);
+  }
+
+  .property-meta-item {
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+
+  .property-actions {
+    display:flex;
+    gap:6px;
+    margin-top:12px;
+  }
+
+  .property-btn {
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:6px 10px;
+    border-radius:6px;
+    font-size:12px;
+    font-weight:500;
+    cursor:pointer;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--t2);
+    transition:all .15s;
+    font-family:var(--font-b);
+  }
+
+  .property-btn:hover {
+    border-color:var(--accent);
+    color:var(--accent);
+    background:var(--accent-lt);
+  }
+
+  .property-btn.primary {
+    background:var(--accent);
+    color:#fff;
+    border-color:var(--accent);
+  }
+
+  .property-btn.primary:hover {
+    filter:brightness(1.08);
+    transform:translateY(-1px);
+  }
+
+  /* 历史数据弹窗样式 */
+  .history-filters {
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:var(--r-sm);
+    padding:12px;
+    margin-bottom:16px;
+  }
+
+  .history-chart {
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:var(--r);
+    padding:24px;
+    min-height:280px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .chart-placeholder {
+    text-align:center;
+    color:var(--t3);
+  }
+
+  .chart-placeholder-text {
+    font-size:14px;
+    font-weight:500;
+    color:var(--t2);
+    margin-top:12px;
+  }
+
+  .chart-placeholder-sub {
+    font-size:12px;
+    color:var(--t3);
+    margin-top:6px;
+  }
+
+  .history-data-table {
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--r-sm);
+    padding:14px;
+  }
+
+  .history-data-table table {
+    width:100%;
+  }
+
+  .history-data-table thead th {
+    font-size:10.5px;
+    padding:8px 12px;
+  }
+
+  .history-data-table tbody td {
+    padding:8px 12px;
+    font-size:12.5px;
+  }
+
+  /* 编辑设备弹窗 */
+  #edit-device-modal .modal-body {
+    padding:16px 20px;
+    gap:12px;
+  }
+
+  #edit-device-modal .form-input {
+    padding:7px 10px;
+    font-size:12.5px;
+  }
+
+  #edit-device-modal textarea.form-input {
+    resize:none;
+    font-family:var(--font-m);
+  }
 </style>
 </head>
 <body>
@@ -903,12 +1352,12 @@
           <table>
             <thead><tr><th>设备</th><th>产品</th><th>地址</th><th>描述</th><th>创建/更新</th><th>状态</th><th>操作</th></tr></thead>
             <tbody>
-              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div><div><div class="dev-name">仓储温湿度-A01</div><div class="dev-id"><span class="code-tag">dev_warehouse_th_001</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">温湿度传感器</span><span class="code-tag">#101</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">mqtt://uplink/warehouse/a01</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">mqtt://downlink/warehouse/a01</span></div></div></td><td style="color:var(--t3);font-size:12.5px">仓储区温湿度一体传感器</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-01-12 10:20</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:32</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">属性</button><button class="rbtn">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
-              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><div><div class="dev-name">边缘网关-G03</div><div class="dev-id"><span class="code-tag">dev_edge_gw_003</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">智能网关</span><span class="code-tag">#208</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">tcp://10.0.2.18:1883</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">tcp://10.0.2.18:1884</span></div></div></td><td style="color:var(--t3);font-size:12.5px">园区边缘网关（北区）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-02-05 09:12</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:33</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">属性</button><button class="rbtn">调试</button><button class="rbtn">编辑</button></div></td></tr>
-              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div><div class="dev-name">智能电表-M12</div><div class="dev-id"><span class="code-tag">dev_meter_m12</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">电力计量</span><span class="code-tag">#356</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">modbus://rtu/COM3/1</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">modbus://rtu/COM3/1</span></div></div></td><td style="color:var(--t3);font-size:12.5px">配电室 1# 回路计量设备</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-03-01 16:40</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 12:10</div></div></td><td><span class="tag t-off"><span class="tdot"></span>离线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">属性</button><button class="rbtn">重连</button><button class="rbtn">编辑</button></div></td></tr>
-              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg></div><div><div class="dev-name">CO₂ 监测-S08</div><div class="dev-id"><span class="code-tag">dev_co2_s08</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">环境监测</span><span class="code-tag">#142</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">http://10.0.3.21:9000/report</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">http://10.0.3.21:9000/cmd</span></div></div></td><td style="color:var(--t3);font-size:12.5px">会议室空气质量监测设备</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-04-10 08:05</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:14</div></div></td><td><span class="tag t-idle"><span class="tdot"></span>空闲</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">属性</button><button class="rbtn">调试</button><button class="rbtn">编辑</button></div></td></tr>
-              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div><div class="dev-name">楼宇控制器-B05</div><div class="dev-id"><span class="code-tag">dev_bms_ctrl_b05</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">楼宇自控</span><span class="code-tag">#512</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">bacnet://192.168.8.20/1005</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">bacnet://192.168.8.20/1005</span></div></div></td><td style="color:var(--t3);font-size:12.5px">楼宇自控主控器（B 栋 5F）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-04-08 11:28</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:31</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">属性</button><button class="rbtn">调试</button><button class="rbtn">编辑</button></div></td></tr>
-              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div><div><div class="dev-name">压力传感器-P02</div><div class="dev-id"><span class="code-tag">dev_pressure_p02</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">工业压力</span><span class="code-tag">#619</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">coap://10.0.4.15/sensors/p02</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">coap://10.0.4.15/cmd/p02</span></div></div></td><td style="color:var(--t3);font-size:12.5px">高压管线压力监测点（P02）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-03-22 15:08</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 09:15</div></div></td><td><span class="tag t-off"><span class="tdot"></span>离线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">属性</button><button class="rbtn">重连</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div><div><div class="dev-name">仓储温湿度-A01</div><div class="dev-id"><span class="code-tag">dev_warehouse_th_001</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">温湿度传感器</span><span class="code-tag">#101</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">mqtt://uplink/warehouse/a01</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">mqtt://downlink/warehouse/a01</span></div></div></td><td style="color:var(--t3);font-size:12.5px">仓储区温湿度一体传感器</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-01-12 10:20</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:32</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn" onclick="openDeviceDetail(currentDevice)">详情</button><button class="rbtn">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><div><div class="dev-name">边缘网关-G03</div><div class="dev-id"><span class="code-tag">dev_edge_gw_003</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">智能网关</span><span class="code-tag">#208</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">tcp://10.0.2.18:1883</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">tcp://10.0.2.18:1884</span></div></div></td><td style="color:var(--t3);font-size:12.5px">园区边缘网关（北区）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-02-05 09:12</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:33</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">调试</button><button class="rbtn">编辑</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div><div class="dev-name">智能电表-M12</div><div class="dev-id"><span class="code-tag">dev_meter_m12</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">电力计量</span><span class="code-tag">#356</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">modbus://rtu/COM3/1</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">modbus://rtu/COM3/1</span></div></div></td><td style="color:var(--t3);font-size:12.5px">配电室 1# 回路计量设备</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-03-01 16:40</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 12:10</div></div></td><td><span class="tag t-off"><span class="tdot"></span>离线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">重连</button><button class="rbtn">编辑</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg></div><div><div class="dev-name">CO₂ 监测-S08</div><div class="dev-id"><span class="code-tag">dev_co2_s08</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">环境监测</span><span class="code-tag">#142</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">http://10.0.3.21:9000/report</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">http://10.0.3.21:9000/cmd</span></div></div></td><td style="color:var(--t3);font-size:12.5px">会议室空气质量监测设备</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-04-10 08:05</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:14</div></div></td><td><span class="tag t-idle"><span class="tdot"></span>空闲</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">调试</button><button class="rbtn">编辑</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div><div class="dev-name">楼宇控制器-B05</div><div class="dev-id"><span class="code-tag">dev_bms_ctrl_b05</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">楼宇自控</span><span class="code-tag">#512</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">bacnet://192.168.8.20/1005</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">bacnet://192.168.8.20/1005</span></div></div></td><td style="color:var(--t3);font-size:12.5px">楼宇自控主控器（B 栋 5F）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-04-08 11:28</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:31</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">调试</button><button class="rbtn">编辑</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div><div><div class="dev-name">压力传感器-P02</div><div class="dev-id"><span class="code-tag">dev_pressure_p02</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">工业压力</span><span class="code-tag">#619</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">coap://10.0.4.15/sensors/p02</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">coap://10.0.4.15/cmd/p02</span></div></div></td><td style="color:var(--t3);font-size:12.5px">高压管线压力监测点（P02）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-03-22 15:08</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 09:15</div></div></td><td><span class="tag t-off"><span class="tdot"></span>离线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">重连</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -1271,6 +1720,180 @@
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 设备详情页面 ══ -->
+    <div id="page-device-detail" class="page" style="display:none;">
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-hdr-left">
+            <button class="icon-btn" onclick="switchPage('devices')" aria-label="返回">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="card-title">设备信息</span>
+          </div>
+          <div class="card-hdr-right">
+            <span class="card-meta" id="device-detail-updated">最近更新：2024-06-01 14:32</span>
+            <button class="btn btn-ghost" onclick="openModal('edit-device-modal')" style="margin-left:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              编辑
+            </button>
+          </div>
+        </div>
+        <div class="device-detail-header">
+          <div class="device-detail-left">
+            <div class="device-icon-large">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div class="device-info">
+              <div class="device-name" id="device-detail-name">温湿度传感器 001</div>
+              <div class="device-meta">
+                <span class="code-tag" id="device-detail-key">dev_thm_001</span>
+                <span class="tag t-on" id="device-detail-status"><span class="tdot"></span>在线</span>
+              </div>
+              <div class="device-desc" id="device-detail-desc">用于监测环境温湿度的传感器设备</div>
+            </div>
+          </div>
+          <div class="device-detail-right">
+            <div class="device-stat-item">
+              <div class="device-stat-label">产品 ID</div>
+              <div class="device-stat-value" id="device-detail-product-id">1001</div>
+            </div>
+            <div class="device-stat-item">
+              <div class="device-stat-label">创建时间</div>
+              <div class="device-stat-value" id="device-detail-created">2024-01-15</div>
+            </div>
+            <div class="device-stat-item">
+              <div class="device-stat-label">属性数量</div>
+              <div class="device-stat-value" id="device-detail-property-count">4</div>
+            </div>
+          </div>
+        </div>
+        <div class="device-address-section">
+          <div class="section-header">
+            <span class="section-title">通信地址</span>
+            <span class="section-count" id="device-address-count">共 3 条地址</span>
+          </div>
+          <div class="address-grid" id="device-address-grid">
+            <!-- 通信地址卡片将通过 JS 动态生成 -->
+          </div>
+        </div>
+      </div>
+
+      <div class="device-properties-section">
+        <div class="section-header">
+          <span class="section-title">设备属性</span>
+          <span class="section-count" id="device-properties-count">共 4 项</span>
+        </div>
+        <div class="properties-grid" id="device-properties-grid">
+          <!-- 属性卡片将通过 JS 动态生成 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 属性历史数据弹窗 ══ -->
+    <div class="modal-mask" id="property-history-modal" onclick="closeModal('property-history-modal')">
+      <div class="modal modal-wide" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <span class="modal-title" id="history-property-name">属性历史数据</span>
+          <button class="modal-close" onclick="closeModal('property-history-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="history-filters">
+            <div class="form-row" style="margin-bottom:12px;">
+              <label class="form-label">时间范围</label>
+              <div style="display:flex;gap:8px;">
+                <select class="fsel" id="history-time-range" onchange="updateHistoryChart()">
+                  <option value="1h">最近 1 小时</option>
+                  <option value="6h">最近 6 小时</option>
+                  <option value="24h" selected>最近 24 小时</option>
+                  <option value="7d">最近 7 天</option>
+                  <option value="30d">最近 30 天</option>
+                </select>
+                <button class="btn btn-primary" onclick="updateHistoryChart()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+                  更新
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="history-chart" id="history-chart">
+            <div class="chart-placeholder">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--t3);opacity:0.5;">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                <polyline points="7.5 12 10.5 15 16.5 9"/>
+              </svg>
+              <div class="chart-placeholder-text">历史数据图表区域</div>
+              <div class="chart-placeholder-sub">当前属性：<span id="history-property-key" style="font-family:var(--font-m);color:var(--accent);">temperature</span></div>
+            </div>
+          </div>
+          <div class="history-data-table" style="margin-top:16px;">
+            <div class="card-title" style="margin-bottom:10px;">最近数据记录</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>时间戳</th>
+                  <th>数值</th>
+                  <th>状态</th>
+                </tr>
+              </thead>
+              <tbody id="history-data-body">
+                <tr>
+                  <td style="font-family:var(--font-m);font-size:12px;">2024-06-01 14:30:00</td>
+                  <td style="font-family:var(--font-m);font-size:12px;color:var(--t1);">25.6</td>
+                  <td><span class="tag t-on"><span class="tdot"></span>正常</span></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-m);font-size:12px;">2024-06-01 14:29:00</td>
+                  <td style="font-family:var(--font-m);font-size:12px;color:var(--t1);">25.5</td>
+                  <td><span class="tag t-on"><span class="tdot"></span>正常</span></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--font-m);font-size:12px;">2024-06-01 14:28:00</td>
+                  <td style="font-family:var(--font-m);font-size:12px;color:var(--t1);">25.7</td>
+                  <td><span class="tag t-on"><span class="tdot"></span>正常</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 编辑设备弹窗 ══ -->
+    <div class="modal-mask" id="edit-device-modal" onclick="closeModal('edit-device-modal')">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-hdr">
+          <span class="modal-title">编辑设备</span>
+          <button class="modal-close" onclick="closeModal('edit-device-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <label class="form-label">设备名称 <span class="req">*</span></label>
+            <input class="form-input" type="text" id="edit-device-name" placeholder="请输入设备名称">
+          </div>
+          <div class="form-row">
+            <label class="form-label">设备标识符 <span class="req">*</span></label>
+            <input class="form-input" type="text" id="edit-device-key" placeholder="如：dev_thm_001" style="font-family:var(--font-m);font-size:12px;" disabled>
+          </div>
+          <div class="form-row">
+            <label class="form-label">产品 ID <span class="req">*</span></label>
+            <input class="form-input" type="number" id="edit-device-product-id" placeholder="请输入产品 ID">
+          </div>
+          <div class="form-row">
+            <label class="form-label">设备地址 (JSON) <span class="req">*</span></label>
+            <textarea class="form-input" id="edit-device-address" rows="3" placeholder='例如：{"topic":"/device/up","protocol":"MQTT"}' style="font-family:var(--font-m);font-size:12px;"></textarea>
+          </div>
+          <div class="form-row">
+            <label class="form-label">描述</label>
+            <textarea class="form-input" id="edit-device-description" rows="2" placeholder="设备描述信息"></textarea>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-ghost" onclick="closeModal('edit-device-modal')">取消</button>
+          <button class="btn btn-primary" onclick="saveDeviceEdit()">保存</button>
         </div>
       </div>
     </div>
@@ -1958,11 +2581,12 @@
 
 <script>
   const pages = {
-    workbench: 'page-workbench',
-    tsl:       'page-tsl',
-    tslDetail: 'page-tsl-detail',
-    products:  'page-products',
-    devices:   'page-devices',
+    workbench:    'page-workbench',
+    tsl:          'page-tsl',
+    tslDetail:    'page-tsl-detail',
+    products:     'page-products',
+    devices:      'page-devices',
+    deviceDetail: 'page-device-detail',
   };
 
   function switchPage(pageKey) {
@@ -2096,6 +2720,217 @@
     if (id === 'add-model-modal') setWizardStep(id, 1);
   }
   function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  // ═══════════════════════════ 设备详情相关函数 ═══════════════════════════
+  
+  // 模拟设备数据
+  const currentDevice = {
+    id: 1,
+    key: 'dev_thm_001',
+    name: '温湿度传感器 001',
+    product_id: 1001,
+    address: {
+      uplink: [
+        { desc: '上传设备数据至MQTT', address: '/sys/TH-Sensor/esp32c3-dht11-001/uplink/data' },
+        { desc: '上传设备状态至MQTT', address: '/sys/TH-Sensor/esp32c3-dht11-001/uplink/status' }
+      ],
+      downlink: [
+        { desc: '下发事件至设备（暂未实现）', address: '/sys/TH-Sensor/esp32c3-dht11-001/downlink/event' }
+      ]
+    },
+    description: '用于监测环境温湿度的传感器设备',
+    created_time: '2024-01-15',
+    updated_time: '2024-06-01 14:32',
+    status: 'online',
+    properties: [
+      { id: 1, key: 'temperature', name: '温度', data_type: 3, unit: '℃', value: 25.6, persistent: true, store_mode: 'minute' },
+      { id: 2, key: 'humidity', name: '湿度', data_type: 3, unit: '%', value: 60.2, persistent: true, store_mode: 'minute' },
+      { id: 3, key: 'battery', name: '电量', data_type: 2, unit: '%', value: 85, persistent: true, store_mode: 'hour' },
+      { id: 4, key: 'alarm', name: '告警状态', data_type: 1, unit: '', value: false, persistent: true, store_mode: 'change' }
+    ]
+  };
+
+  // 获取数据类型文本
+  function getDataTypeText(type) {
+    const map = { 1: 'bool', 2: 'int', 3: 'float' };
+    return map[type] || 'unknown';
+  }
+
+  // 获取存储模式文本
+  function getStoreModeText(mode) {
+    const map = { 'full': '全量存储', 'change': '变化存储', 'minute': '整点存储' };
+    return map[mode] || mode;
+  }
+
+  // 格式化值显示
+  function formatPropertyValue(value, type) {
+    if (type === 1) return value ? 'true' : 'false';
+    if (type === 2) return String(value);
+    if (type === 3) return value.toFixed(1);
+    return String(value);
+  }
+
+  // 生成属性卡片 HTML
+  function generatePropertyCard(prop) {
+    const typeClass = `type-${getDataTypeText(prop.data_type)}`;
+    const ptypeClass = `ptype-${getDataTypeText(prop.data_type)}`;
+    const typeText = getDataTypeText(prop.data_type);
+    const formattedValue = formatPropertyValue(prop.value, prop.data_type);
+    
+    return `
+      <div class="property-card ${typeClass}">
+        <div class="property-header">
+          <div class="property-info">
+            <div class="property-name">${prop.name}</div>
+            <div class="property-key">${prop.key}</div>
+          </div>
+          <span class="property-type-tag ${ptypeClass}">${typeText}</span>
+        </div>
+        <div class="property-value">
+          ${formattedValue}<span class="property-unit">${prop.unit ? ' ' + prop.unit : ''}</span>
+        </div>
+        <div class="property-meta">
+          <div class="property-meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+            ${getStoreModeText(prop.store_mode)}
+          </div>
+          <div class="property-meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${prop.persistent ? '<polyline points="20 6 9 17 4 12"/>' : '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'}</svg>
+            ${prop.persistent ? '存历史' : '不存历史'}
+          </div>
+        </div>
+        <div class="property-actions">
+          <button class="property-btn primary" onclick="viewPropertyHistory('${prop.key}', '${prop.name}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+            查看历史
+          </button>
+          <button class="property-btn" onclick="refreshProperty('${prop.key}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            刷新
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // 生成通信地址卡片 HTML
+  function generateAddressCard(address, type) {
+    const typeClass = type === 'uplink' ? 'uplink' : 'downlink';
+    const typeLabel = type === 'uplink' ? '上行' : '下行';
+    const typeIcon = type === 'uplink' 
+      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>'
+      : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 6 10.5 15.5 15.5 10.5 23 18"/><polyline points="17 6 23 6 23 12"/></svg>';
+    
+    return `
+      <div class="address-card ${typeClass}">
+        <div class="address-header">
+          <span class="address-type">${typeLabel}</span>
+          <div class="address-icon">${typeIcon}</div>
+        </div>
+        <div class="address-desc">${address.desc}</div>
+        <div class="address-label">地址路径</div>
+        <div class="address-value">${address.address}</div>
+      </div>
+    `;
+  }
+
+  // 打开设备详情页面
+  function openDeviceDetail(device) {
+    // 填充设备信息
+    document.getElementById('device-detail-name').textContent = device.name;
+    document.getElementById('device-detail-key').textContent = device.key;
+    document.getElementById('device-detail-desc').textContent = device.description || '暂无描述';
+    document.getElementById('device-detail-product-id').textContent = device.product_id;
+    document.getElementById('device-detail-created').textContent = device.created_time;
+    document.getElementById('device-detail-updated').textContent = '最近更新：' + device.updated_time;
+    document.getElementById('device-detail-property-count').textContent = device.properties.length + '项';
+    
+    // 设置状态
+    const statusEl = document.getElementById('device-detail-status');
+    if (device.status === 'online') {
+      statusEl.className = 'tag t-on';
+      statusEl.innerHTML = '<span class="tdot"></span>在线';
+    } else if (device.status === 'offline') {
+      statusEl.className = 'tag t-off';
+      statusEl.innerHTML = '<span class="tdot"></span>离线';
+    } else {
+      statusEl.className = 'tag t-idle';
+      statusEl.innerHTML = '<span class="tdot"></span>空闲';
+    }
+    
+    // 生成属性卡片
+    const grid = document.getElementById('device-properties-grid');
+    grid.innerHTML = device.properties.map(prop => generatePropertyCard(prop)).join('');
+    
+    // 生成通信地址卡片
+    if (device.address) {
+      const addressGrid = document.getElementById('device-address-grid');
+      let addressHtml = '';
+      let addressCount = 0;
+      
+      if (device.address.uplink && device.address.uplink.length > 0) {
+        device.address.uplink.forEach(addr => {
+          addressHtml += generateAddressCard(addr, 'uplink');
+          addressCount++;
+        });
+      }
+      
+      if (device.address.downlink && device.address.downlink.length > 0) {
+        device.address.downlink.forEach(addr => {
+          addressHtml += generateAddressCard(addr, 'downlink');
+          addressCount++;
+        });
+      }
+      
+      addressGrid.innerHTML = addressHtml;
+      document.getElementById('device-address-count').textContent = `共 ${addressCount} 条地址`;
+    }
+    
+    // 切换到详情页面
+    switchPage('deviceDetail');
+  }
+
+  // 查看属性历史数据
+  function viewPropertyHistory(propertyKey, propertyName) {
+    document.getElementById('history-property-name').textContent = propertyName + ' - 历史数据';
+    document.getElementById('history-property-key').textContent = propertyKey;
+    openModal('property-history-modal');
+  }
+
+  // 更新历史图表（模拟）
+  function updateHistoryChart() {
+    const timeRange = document.getElementById('history-time-range').value;
+    console.log('更新历史图表，时间范围:', timeRange);
+    // 实际应用中这里会调用 API 获取数据并渲染图表
+  }
+
+  // 刷新属性数据
+  function refreshProperty(propertyKey) {
+    console.log('刷新属性:', propertyKey);
+    // 实际应用中这里会调用 API 获取最新数据
+  }
+
+  // 保存设备编辑
+  function saveDeviceEdit() {
+    const name = document.getElementById('edit-device-name').value;
+    const productId = document.getElementById('edit-device-product-id').value;
+    const address = document.getElementById('edit-device-address').value;
+    const description = document.getElementById('edit-device-description').value;
+    
+    console.log('保存设备编辑:', { name, productId, address, description });
+    closeModal('edit-device-modal');
+    // 实际应用中这里会调用 API 更新数据
+  }
+
+  // 初始化设备详情页面数据
+  function initDeviceDetail() {
+    // 设置编辑表单的初始值
+    document.getElementById('edit-device-name').value = currentDevice.name;
+    document.getElementById('edit-device-key').value = currentDevice.key;
+    document.getElementById('edit-device-product-id').value = currentDevice.product_id;
+    document.getElementById('edit-device-address').value = JSON.stringify(currentDevice.address, null, 2);
+    document.getElementById('edit-device-description').value = currentDevice.description;
+  }
 </script>
 
 </body>
