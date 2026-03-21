@@ -265,12 +265,12 @@
     transition:all .15s;
   }
   .icon-btn:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-lt); }
-  .icon-picker-row { display:flex; gap:12px; align-items:flex-start; }
+  .icon-picker-row { display:flex; gap:12px; align-items:stretch; }
   .upload-box {
     position:relative;
-    width:220px;
-    min-height:110px;
-    border:1px dashed var(--border);
+    width:140px;
+    height:140px;
+    border:1px solid var(--border);
     border-radius:var(--r-sm);
     background:var(--surface-2);
     display:flex;
@@ -279,6 +279,7 @@
     justify-content:center;
     gap:6px;
     padding:10px;
+    box-sizing:border-box;
   }
   .upload-box input {
     position:absolute;
@@ -287,8 +288,8 @@
     cursor:pointer;
   }
   .upload-preview {
-    width:48px; height:48px;
-    border-radius:10px;
+    width:40px; height:40px;
+    border-radius:8px;
     border:1px solid var(--border);
     background:var(--surface);
     display:flex;
@@ -296,31 +297,69 @@
     justify-content:center;
     color:var(--t3);
   }
-  .upload-preview img { width:100%; height:100%; object-fit:cover; border-radius:10px; }
+  .upload-preview img { width:100%; height:100%; object-fit:cover; border-radius:8px; }
   .upload-text { font-size:12px; color:var(--t1); font-weight:500; }
   .upload-sub { font-size:11px; color:var(--t3); }
   .icon-picker {
-    width:180px;
+    width:360px;
+    height:140px;
     border:1px solid var(--border);
     border-radius:var(--r-sm);
     background:var(--surface-2);
-    padding:8px;
+    padding:10px;
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(5,1fr);
+    grid-template-rows:repeat(2,1fr);
     gap:8px;
+    box-sizing:border-box;
   }
   .icon-option {
-    width:48px; height:48px;
-    border-radius:10px;
+    width:100%; height:100%;
+    border-radius:6px;
     border:1px solid var(--border);
     background:var(--surface);
     display:flex; align-items:center; justify-content:center;
-    color:var(--t2);
+    color:var(--t3);
     cursor:pointer;
     transition:all .15s;
   }
-  .icon-option:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-lt); }
+  .icon-option:hover { border-color:var(--accent); background:var(--accent-lt); }
   .icon-option.selected { border-color:var(--accent); background:var(--accent-lt); color:var(--accent); box-shadow:0 0 0 2px rgba(37,99,235,.12); }
+  .color-picker-section {
+    width:220px;
+    padding:10px;
+    display:flex;
+    flex-direction:column;
+    box-sizing:border-box;
+  }
+  .color-picker-grid {
+    display:grid;
+    grid-template-columns:repeat(5,42px);
+    grid-template-rows:repeat(2,42px);
+    gap:6px;
+    row-gap:12px;
+  }
+  .color-option {
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    border:2px solid transparent;
+    cursor:pointer;
+    transition:transform .2s, border-color .2s, box-shadow .2s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-sizing:border-box;
+    justify-self:center;
+    align-self:center;
+  }
+  .color-option:hover { transform:scale(1.1); }
+  .color-option.selected { 
+    width:42px;
+    height:42px;
+    border-color:var(--surface);
+    box-shadow:0 0 0 2px rgba(0,0,0,.15);
+  }
 
   /* Filter */
   .filter-bar { display:flex; gap:8px; padding:10px 18px; background:var(--surface-2); border-bottom:1px solid var(--border); }
@@ -509,8 +548,6 @@
   }
   .prop-tab.active .tab-count { background:var(--accent-lt); color:var(--accent); }
 
-  .tab-panel { display:flex; flex-direction:column; }
-
   /* Property table tags */
   .code-tag {
     font-family:var(--font-m); font-size:11.5px;
@@ -572,8 +609,8 @@
 
   .modal-body { padding:18px 20px; display:flex; flex-direction:column; gap:14px; }
 
-  .modal.modal-wide { width:860px; }
-  @media (max-width: 920px) { .modal.modal-wide { width:92vw; } }
+  .modal.modal-wide { width:960px; }
+  @media (max-width: 1020px) { .modal.modal-wide { width:92vw; } }
 
   .wizard-steps { display:flex; gap:0; padding:0 4px; }
   .wizard-stepper {
@@ -673,6 +710,29 @@
 
   .wizard-panel { display:none; flex-direction:column; gap:10px; }
   .wizard-panel.active { display:flex; }
+  .add-row { background:var(--surface-2); transition:background .15s; }
+  .add-row:hover { background:var(--accent-lt); }
+  .editing-row { background:var(--accent-lt); }
+  .inline-input {
+    padding:4px 8px;
+    border:1px solid var(--border);
+    border-radius:4px;
+    background:var(--surface);
+    color:var(--t1);
+    outline:none;
+    transition:border-color .15s;
+  }
+  .inline-input:focus { border-color:var(--accent); }
+  .inline-select {
+    padding:4px 6px;
+    border:1px solid var(--border);
+    border-radius:4px;
+    background:var(--surface);
+    color:var(--t1);
+    outline:none;
+    cursor:pointer;
+  }
+  .inline-select:focus { border-color:var(--accent); }
 
   .form-row { display:flex; flex-direction:column; gap:5px; }
   .form-row.two-col { flex-direction:row; gap:12px; }
@@ -943,7 +1003,7 @@
     line-height:1.5;
   }
 
-  .properties-grid {
+  .property-card {
     background:var(--surface-2);
     border:1px solid var(--border);
     border-radius:var(--r-sm);
@@ -1213,17 +1273,14 @@
       <div class="nav-item" data-page="tsl">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
         物模型管理
-        <span class="nav-badge">12</span>
       </div>
       <div class="nav-item" data-page="products">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
         产品管理
-        <span class="nav-badge">8</span>
       </div>
       <div class="nav-item" data-page="devices">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         设备管理
-        <span class="nav-badge red">3</span>
       </div>
     </div>
 
@@ -1346,18 +1403,17 @@
       <div class="card" style="flex:1;min-height:0">
         <div class="card-hdr">
           <span class="card-title">设备列表</span>
-          <span class="card-meta">共 1,248 台设备</span>
         </div>
         <div style="flex:1;overflow:auto">
           <table>
-            <thead><tr><th>设备</th><th>产品</th><th>地址</th><th>描述</th><th>创建/更新</th><th>状态</th><th>操作</th></tr></thead>
+            <thead><tr><th>设备</th><th>产品</th><th>描述</th><th>创建/更新</th><th>状态</th><th>操作</th></tr></thead>
             <tbody>
-              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div><div><div class="dev-name">仓储温湿度-A01</div><div class="dev-id"><span class="code-tag">dev_warehouse_th_001</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">温湿度传感器</span><span class="code-tag">#101</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">mqtt://uplink/warehouse/a01</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">mqtt://downlink/warehouse/a01</span></div></div></td><td style="color:var(--t3);font-size:12.5px">仓储区温湿度一体传感器</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-01-12 10:20</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:32</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn" onclick="openDeviceDetail(currentDevice)">详情</button><button class="rbtn">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
-              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><div><div class="dev-name">边缘网关-G03</div><div class="dev-id"><span class="code-tag">dev_edge_gw_003</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">智能网关</span><span class="code-tag">#208</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">tcp://10.0.2.18:1883</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">tcp://10.0.2.18:1884</span></div></div></td><td style="color:var(--t3);font-size:12.5px">园区边缘网关（北区）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-02-05 09:12</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:33</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">调试</button><button class="rbtn">编辑</button></div></td></tr>
-              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div><div class="dev-name">智能电表-M12</div><div class="dev-id"><span class="code-tag">dev_meter_m12</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">电力计量</span><span class="code-tag">#356</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">modbus://rtu/COM3/1</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">modbus://rtu/COM3/1</span></div></div></td><td style="color:var(--t3);font-size:12.5px">配电室 1# 回路计量设备</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-03-01 16:40</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 12:10</div></div></td><td><span class="tag t-off"><span class="tdot"></span>离线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">重连</button><button class="rbtn">编辑</button></div></td></tr>
-              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg></div><div><div class="dev-name">CO₂ 监测-S08</div><div class="dev-id"><span class="code-tag">dev_co2_s08</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">环境监测</span><span class="code-tag">#142</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">http://10.0.3.21:9000/report</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">http://10.0.3.21:9000/cmd</span></div></div></td><td style="color:var(--t3);font-size:12.5px">会议室空气质量监测设备</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-04-10 08:05</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:14</div></div></td><td><span class="tag t-idle"><span class="tdot"></span>空闲</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">调试</button><button class="rbtn">编辑</button></div></td></tr>
-              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div><div class="dev-name">楼宇控制器-B05</div><div class="dev-id"><span class="code-tag">dev_bms_ctrl_b05</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">楼宇自控</span><span class="code-tag">#512</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">bacnet://192.168.8.20/1005</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">bacnet://192.168.8.20/1005</span></div></div></td><td style="color:var(--t3);font-size:12.5px">楼宇自控主控器（B 栋 5F）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-04-08 11:28</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:31</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">调试</button><button class="rbtn">编辑</button></div></td></tr>
-              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div><div><div class="dev-name">压力传感器-P02</div><div class="dev-id"><span class="code-tag">dev_pressure_p02</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">工业压力</span><span class="code-tag">#619</span></div></td><td><div style="display:flex;flex-direction:column;gap:5px;min-width:220px"><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--accent-lt);color:var(--accent)">UP</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">coap://10.0.4.15/sensors/p02</span></div><div style="display:flex;align-items:center;gap:6px"><span class="code-tag" style="background:var(--surface-2);color:var(--t2)">DOWN</span><span style="font-family:var(--font-m);font-size:11.5px;color:var(--t2)">coap://10.0.4.15/cmd/p02</span></div></div></td><td style="color:var(--t3);font-size:12.5px">高压管线压力监测点（P02）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-03-22 15:08</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 09:15</div></div></td><td><span class="tag t-off"><span class="tdot"></span>离线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn">重连</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div><div><div class="dev-name">仓储温湿度-A01</div><div class="dev-id"><span class="code-tag">dev_warehouse_th_001</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">温湿度传感器</span><span class="code-tag">#101</span></div></td><td style="color:var(--t3);font-size:12.5px">仓储区温湿度一体传感器</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-01-12 10:20</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:32</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn" onclick="openDeviceDetail(currentDevice)">详情</button><button class="rbtn" onclick="openDeviceEdit()">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><div><div class="dev-name">边缘网关-G03</div><div class="dev-id"><span class="code-tag">dev_edge_gw_003</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">智能网关</span><span class="code-tag">#208</span></div></td><td style="color:var(--t3);font-size:12.5px">园区边缘网关（北区）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-02-05 09:12</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:33</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn" onclick="openDeviceEdit()">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div><div class="dev-name">智能电表-M12</div><div class="dev-id"><span class="code-tag">dev_meter_m12</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">电力计量</span><span class="code-tag">#356</span></div></td><td style="color:var(--t3);font-size:12.5px">配电室 1# 回路计量设备</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-03-01 16:40</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 12:10</div></div></td><td><span class="tag t-off"><span class="tdot"></span>离线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn" onclick="openDeviceEdit()">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg></div><div><div class="dev-name">CO₂ 监测-S08</div><div class="dev-id"><span class="code-tag">dev_co2_s08</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">环境监测</span><span class="code-tag">#142</span></div></td><td style="color:var(--t3);font-size:12.5px">会议室空气质量监测设备</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-04-10 08:05</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:14</div></div></td><td><span class="tag t-idle"><span class="tdot"></span>空闲</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn" onclick="openDeviceEdit()">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div><div class="dev-name">楼宇控制器-B05</div><div class="dev-id"><span class="code-tag">dev_bms_ctrl_b05</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">楼宇自控</span><span class="code-tag">#512</span></div></td><td style="color:var(--t3);font-size:12.5px">楼宇自控主控器（B 栋 5F）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-04-08 11:28</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 14:31</div></div></td><td><span class="tag t-on"><span class="tdot"></span>在线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn" onclick="openDeviceEdit()">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
+              <tr><td><div class="dev-cell"><div class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div><div><div class="dev-name">压力传感器-P02</div><div class="dev-id"><span class="code-tag">dev_pressure_p02</span></div></div></div></td><td><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--t2)">工业压力</span><span class="code-tag">#619</span></div></td><td style="color:var(--t3);font-size:12.5px">高压管线压力监测点（P02）</td><td><div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:var(--font-m);font-size:12px;color:var(--t2)">2024-03-22 15:08</div><div style="font-family:var(--font-m);font-size:12px;color:var(--t3)">2024-06-01 09:15</div></div></td><td><span class="tag t-off"><span class="tdot"></span>离线</span></td><td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">详情</button><button class="rbtn" onclick="openDeviceEdit()">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -1440,7 +1496,6 @@
       <div class="card" style="flex:1;min-height:0">
         <div class="card-hdr">
           <span class="card-title">物模型列表</span>
-          <span class="card-meta">共 5 个</span>
         </div>
         <div style="flex:1;overflow:auto">
           <table>
@@ -1883,10 +1938,6 @@
             <input class="form-input" type="number" id="edit-device-product-id" placeholder="请输入产品 ID">
           </div>
           <div class="form-row">
-            <label class="form-label">设备地址 (JSON) <span class="req">*</span></label>
-            <textarea class="form-input" id="edit-device-address" rows="3" placeholder='例如：{"topic":"/device/up","protocol":"MQTT"}' style="font-family:var(--font-m);font-size:12px;"></textarea>
-          </div>
-          <div class="form-row">
             <label class="form-label">描述</label>
             <textarea class="form-input" id="edit-device-description" rows="2" placeholder="设备描述信息"></textarea>
           </div>
@@ -1938,32 +1989,59 @@
               <div class="icon-picker-row">
                 <div class="upload-box">
                   <input id="model-icon-file" type="file" accept="image/*,.svg" onchange="onModelIconUpload(this)">
-                  <div id="model-icon-preview" class="upload-preview">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                  <div id="model-icon-preview" class="upload-preview" style="color:#2563eb;border-color:#2563eb">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg>
                   </div>
                   <div class="upload-text">上传图标</div>
                   <div class="upload-sub">支持 SVG/PNG/JPG</div>
                 </div>
                 <input id="model-icon-input" type="hidden">
+                <input id="model-color-input" type="hidden" value="#2563eb">
                 <div class="icon-picker">
-                  <button class="icon-option selected" data-icon="sensor" onclick="selectModelIcon(this)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg>
+                  <button class="icon-option selected" data-icon="sensor" onclick="selectModelIcon(this)" style="color:#2563eb">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg>
                   </button>
                   <button class="icon-option" data-icon="gateway" onclick="selectModelIcon(this)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                   </button>
                   <button class="icon-option" data-icon="meter" onclick="selectModelIcon(this)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
                   </button>
                   <button class="icon-option" data-icon="chip" onclick="selectModelIcon(this)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/></svg>
                   </button>
                   <button class="icon-option" data-icon="alarm" onclick="selectModelIcon(this)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="8"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="8"/></svg>
                   </button>
                   <button class="icon-option" data-icon="fan" onclick="selectModelIcon(this)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M12 2c2 2 2 6 0 8"/><path d="M22 12c-2 2-6 2-8 0"/><path d="M12 22c-2-2-2-6 0-8"/><path d="M2 12c2-2 6-2 8 0"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M12 2c2 2 2 6 0 8"/><path d="M22 12c-2 2-6 2-8 0"/><path d="M12 22c-2-2-2-6 0-8"/><path d="M2 12c2-2 6-2 8 0"/></svg>
                   </button>
+                  <button class="icon-option" data-icon="light" onclick="selectModelIcon(this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                  </button>
+                  <button class="icon-option" data-icon="valve" onclick="selectModelIcon(this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg>
+                  </button>
+                  <button class="icon-option" data-icon="camera" onclick="selectModelIcon(this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  </button>
+                  <button class="icon-option" data-icon="router" onclick="selectModelIcon(this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="14" width="20" height="6" rx="2"/><path d="M6.5 6a4.5 4.5 0 0 1 9 0"/><path d="M9 6a2 2 0 0 1 4 0"/><line x1="6" y1="18" x2="6.01" y2="18"/><line x1="10" y1="18" x2="10.01" y2="18"/></svg>
+                  </button>
+                </div>
+                <div class="color-picker-section">
+                  <div class="color-picker-grid">
+                    <button class="color-option selected" data-color="#2563eb" style="background:#2563eb" onclick="selectModelColor(this)"></button>
+                    <button class="color-option" data-color="#16a34a" style="background:#16a34a" onclick="selectModelColor(this)"></button>
+                    <button class="color-option" data-color="#d97706" style="background:#d97706" onclick="selectModelColor(this)"></button>
+                    <button class="color-option" data-color="#dc2626" style="background:#dc2626" onclick="selectModelColor(this)"></button>
+                    <button class="color-option" data-color="#7c3aed" style="background:#7c3aed" onclick="selectModelColor(this)"></button>
+                    <button class="color-option" data-color="#0891b2" style="background:#0891b2" onclick="selectModelColor(this)"></button>
+                    <button class="color-option" data-color="#db2777" style="background:#db2777" onclick="selectModelColor(this)"></button>
+                    <button class="color-option" data-color="#475569" style="background:#475569" onclick="selectModelColor(this)"></button>
+                    <button class="color-option" data-color="#65a30d" style="background:#65a30d" onclick="selectModelColor(this)"></button>
+                    <button class="color-option" data-color="#0d9488" style="background:#0d9488" onclick="selectModelColor(this)"></button>
+                  </div>
                 </div>
               </div>
               <div class="form-hint">用于列表展示，支持粘贴 SVG/URL/Base64</div>
@@ -1978,14 +2056,7 @@
             </div>
 
             <div id="wizard-props" class="wizard-panel active">
-              <div style="display:flex;align-items:center;justify-content:space-between">
-                <div style="font-size:13px;font-weight:600;color:var(--t1)">属性列表</div>
-                <button class="btn btn-ghost" style="padding:6px 10px" onclick="openModal('add-prop-modal')">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  添加属性
-                </button>
-              </div>
-              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:200px;overflow:auto">
+              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:280px;overflow:auto">
                 <table>
                   <thead>
                     <tr>
@@ -1998,7 +2069,7 @@
                       <th>操作</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="props-tbody">
                     <tr style="cursor:default">
                       <td><span class="code-tag">temperature</span></td>
                       <td style="color:var(--t2)">温度</td>
@@ -2018,18 +2089,19 @@
                       <td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td>
                     </tr>
                   </tbody>
+                  <tfoot>
+                    <tr class="add-row" onclick="addInlineRow('props')">
+                      <td colspan="7" style="text-align:center;padding:8px;cursor:pointer;color:var(--accent)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      </td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             </div>
 
             <div id="wizard-funcs" class="wizard-panel">
-              <div style="display:flex;align-items:center;gap:8px">
-                <button class="btn btn-ghost" style="padding:6px 8px" onclick="openModal('add-prop-modal')" aria-label="添加功能">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                </button>
-                <div style="font-size:13px;font-weight:600;color:var(--t1)">功能列表</div>
-              </div>
-              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:200px;overflow:auto">
+              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:280px;overflow:auto">
                 <table>
                   <thead>
                     <tr>
@@ -2042,7 +2114,7 @@
                       <th>操作</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="funcs-tbody">
                     <tr style="cursor:default">
                       <td><span class="code-tag">set_report_interval</span></td>
                       <td style="color:var(--t2)">设置上报周期</td>
@@ -2053,19 +2125,19 @@
                       <td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td>
                     </tr>
                   </tbody>
+                  <tfoot>
+                    <tr class="add-row" onclick="addInlineRow('funcs')">
+                      <td colspan="7" style="text-align:center;padding:8px;cursor:pointer;color:var(--accent)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      </td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             </div>
 
             <div id="wizard-events" class="wizard-panel">
-              <div style="display:flex;align-items:center;justify-content:space-between">
-                <div style="font-size:13px;font-weight:600;color:var(--t1)">事件列表</div>
-                <button class="btn btn-ghost" style="padding:6px 10px" onclick="openModal('add-prop-modal')">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  添加事件
-                </button>
-              </div>
-              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:200px;overflow:auto">
+              <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;max-height:280px;overflow:auto">
                 <table>
                   <thead>
                     <tr>
@@ -2078,7 +2150,7 @@
                       <th>操作</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="events-tbody">
                     <tr style="cursor:default">
                       <td><span class="code-tag">over_threshold</span></td>
                       <td style="color:var(--t2)">超阈值告警</td>
@@ -2089,6 +2161,13 @@
                       <td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td>
                     </tr>
                   </tbody>
+                  <tfoot>
+                    <tr class="add-row" onclick="addInlineRow('events')">
+                      <td colspan="7" style="text-align:center;padding:8px;cursor:pointer;color:var(--accent)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      </td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             </div>
@@ -2227,7 +2306,6 @@
       <div class="card" style="flex:1;min-height:0">
         <div class="card-hdr">
           <span class="card-title">产品列表</span>
-          <span class="card-meta">共 8 个产品</span>
         </div>
         <div style="flex:1;overflow:auto">
           <table>
@@ -2635,20 +2713,56 @@
     chip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/></svg>',
     alarm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="8"/></svg>',
     fan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M12 2c2 2 2 6 0 8"/><path d="M22 12c-2 2-6 2-8 0"/><path d="M12 22c-2-2-2-6 0-8"/><path d="M2 12c2-2 6-2 8 0"/></svg>',
+    light: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>',
+    valve: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg>',
+    camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+    router: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="14" width="20" height="6" rx="2"/><path d="M6.5 6a4.5 4.5 0 0 1 9 0"/><path d="M9 6a2 2 0 0 1 4 0"/><line x1="6" y1="18" x2="6.01" y2="18"/><line x1="10" y1="18" x2="10.01" y2="18"/></svg>',
   };
 
   function selectModelIcon(btn) {
     const picker = btn.closest('.icon-picker');
     if (!picker) return;
-    picker.querySelectorAll('.icon-option').forEach(item => item.classList.remove('selected'));
+    const colorInput = document.getElementById('model-color-input');
+    const selectedColor = colorInput ? colorInput.value : '#2563eb';
+    picker.querySelectorAll('.icon-option').forEach(item => {
+      item.classList.remove('selected');
+      item.style.color = 'var(--t3)';
+    });
     btn.classList.add('selected');
+    btn.style.color = selectedColor;
     const input = document.getElementById('model-icon-input');
     const svg = modelIconMap[btn.dataset.icon];
     const preview = document.getElementById('model-icon-preview');
     if (input && svg) input.value = svg;
-    if (preview && svg) preview.innerHTML = svg;
+    if (preview && svg) {
+      preview.innerHTML = svg;
+      preview.style.color = selectedColor;
+      preview.style.borderColor = selectedColor;
+    }
     const fileInput = document.getElementById('model-icon-file');
     if (fileInput) fileInput.value = '';
+  }
+
+  function selectModelColor(btn) {
+    const grid = btn.closest('.color-picker-grid');
+    if (!grid) return;
+    grid.querySelectorAll('.color-option').forEach(item => item.classList.remove('selected'));
+    btn.classList.add('selected');
+    const color = btn.dataset.color;
+    const colorInput = document.getElementById('model-color-input');
+    if (colorInput) colorInput.value = color;
+    const preview = document.getElementById('model-icon-preview');
+    if (preview) {
+      preview.style.borderColor = color;
+      preview.style.color = color;
+    }
+    const picker = btn.closest('.icon-picker-row')?.querySelector('.icon-picker');
+    if (picker) {
+      const selectedIcon = picker.querySelector('.icon-option.selected');
+      if (selectedIcon) {
+        selectedIcon.style.color = color;
+      }
+    }
   }
 
   function onModelIconUpload(input) {
@@ -2712,6 +2826,73 @@
     modal.querySelectorAll('.wizard-panel').forEach(p => p.classList.remove('active'));
     const panel = modal.querySelector(`#${panelId}`);
     if (panel) panel.classList.add('active');
+  }
+
+  function addInlineRow(type) {
+    const tbody = document.getElementById(`${type}-tbody`);
+    if (!tbody) return;
+    const existingEditRow = tbody.querySelector('.editing-row');
+    if (existingEditRow) return;
+    const newRow = document.createElement('tr');
+    newRow.className = 'editing-row';
+    newRow.innerHTML = `
+      <td><input type="text" class="inline-input" placeholder="key" style="width:90px;font-size:12px;font-family:var(--font-m)"></td>
+      <td><input type="text" class="inline-input" placeholder="名称" style="width:80px;font-size:12px"></td>
+      <td>
+        <select class="inline-select" style="width:70px;font-size:12px">
+          <option value="int">int</option>
+          <option value="float">float</option>
+          <option value="bool">bool</option>
+          <option value="string">string</option>
+        </select>
+      </td>
+      <td><input type="text" class="inline-input" placeholder="—" style="width:40px;font-size:12px;font-family:var(--font-m)"></td>
+      <td>
+        <select class="inline-select" style="width:75px;font-size:12px">
+          <option value="raw">raw</option>
+          <option value="formula">formula</option>
+        </select>
+      </td>
+      <td><input type="text" class="inline-input" placeholder="—" style="width:100px;font-size:11.5px;font-family:var(--font-m)"></td>
+      <td>
+        <div class="row-acts" style="opacity:1;gap:5px">
+          <button class="rbtn" style="color:var(--accent);border-color:var(--accent)" onclick="confirmInlineRow(this, '${type}')">确定</button>
+          <button class="rbtn" onclick="cancelInlineRow(this)">取消</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(newRow);
+    newRow.querySelector('input').focus();
+  }
+
+  function confirmInlineRow(btn, type) {
+    const row = btn.closest('tr');
+    const inputs = row.querySelectorAll('input');
+    const selects = row.querySelectorAll('select');
+    const key = inputs[0].value.trim() || 'new_key';
+    const name = inputs[1].value.trim() || '新项目';
+    const dtype = selects[0].value;
+    const unit = inputs[2].value.trim() || '—';
+    const src = selects[1].value;
+    const expr = inputs[3].value.trim() || '—';
+    row.className = '';
+    row.style.cursor = 'default';
+    row.innerHTML = `
+      <td><span class="code-tag">${key}</span></td>
+      <td style="color:var(--t2)">${name}</td>
+      <td><span class="dtype-tag dtype-${dtype}">${dtype}</span></td>
+      <td style="font-family:var(--font-m);font-size:12px;color:var(--t2)">${unit}</td>
+      <td><span class="code-tag src-${src}">${src}</span></td>
+      <td style="color:var(--t3);font-size:12px">${expr}</td>
+      <td><div class="row-acts" style="opacity:1;gap:5px"><button class="rbtn">编辑</button><button class="rbtn" style="color:var(--red);border-color:var(--red);background:var(--red-bg)">删除</button></div></td>
+    `;
+    const tabCount = document.querySelector(`.wizard-tab[onclick*="${type}"] .tab-count`);
+    if (tabCount) tabCount.textContent = parseInt(tabCount.textContent) + 1;
+  }
+
+  function cancelInlineRow(btn) {
+    const row = btn.closest('tr');
+    row.remove();
   }
 
   function openModal(id) {
@@ -2914,10 +3095,9 @@
   function saveDeviceEdit() {
     const name = document.getElementById('edit-device-name').value;
     const productId = document.getElementById('edit-device-product-id').value;
-    const address = document.getElementById('edit-device-address').value;
     const description = document.getElementById('edit-device-description').value;
     
-    console.log('保存设备编辑:', { name, productId, address, description });
+    console.log('保存设备编辑:', { name, productId, description });
     closeModal('edit-device-modal');
     // 实际应用中这里会调用 API 更新数据
   }
@@ -2928,8 +3108,24 @@
     document.getElementById('edit-device-name').value = currentDevice.name;
     document.getElementById('edit-device-key').value = currentDevice.key;
     document.getElementById('edit-device-product-id').value = currentDevice.product_id;
-    document.getElementById('edit-device-address').value = JSON.stringify(currentDevice.address, null, 2);
     document.getElementById('edit-device-description').value = currentDevice.description;
+  }
+
+  // 打开设备编辑弹窗
+  function openDeviceEdit(device) {
+    if (device) {
+      currentDevice.id = device.id;
+      currentDevice.key = device.key;
+      currentDevice.name = device.name;
+      currentDevice.product_id = device.product_id;
+      currentDevice.address = device.address;
+      currentDevice.description = device.description;
+    }
+    document.getElementById('edit-device-name').value = currentDevice.name;
+    document.getElementById('edit-device-key').value = currentDevice.key;
+    document.getElementById('edit-device-product-id').value = currentDevice.product_id;
+    document.getElementById('edit-device-description').value = currentDevice.description;
+    openModal('edit-device-modal');
   }
 </script>
 
