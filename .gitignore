@@ -7,10 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+edgelink-ui/node_modules
+edgelink-ui/dist
+edgelink-ui/dist-ssr
+edgelink-ui/*.local
 
 # Editor directories and files
 .vscode/*
