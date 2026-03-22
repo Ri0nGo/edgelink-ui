@@ -2,20 +2,33 @@ import type {
   ThingModelItem,
   ThingModelListParams,
   ThingModelListResult,
+  ThingModelProperty,
+  ThingModelUpsertPayload,
 } from '../types/thingModel'
+import {
+  extractListPayload,
+  extractPayload,
+  normalizeDate,
+  requestJson,
+  toNumber,
+} from './apiUtils'
 
 type RawThingModel = {
   id?: number | string
   model_id?: number | string
+  thing_model_id?: number | string
   name?: string
   model_name?: string
   identifier?: string
   key?: string
+  icon?: string
+  icon_svg?: string
   description?: string
   desc?: string
   prop_count?: number | string
   property_count?: number | string
   attribute_count?: number | string
+  created_time?: string | number
   created_at?: string | number
   create_time?: string | number
   createdAt?: string | number
@@ -66,29 +79,9 @@ const FALLBACK_THING_MODELS: ThingModelItem[] = [
   },
 ]
 
-function normalizeDate(input: string | number | undefined): string {
-  if (input === undefined || input === null || input === '') {
-    return '--'
-  }
-
-  if (typeof input === 'string' && /^\d{4}-\d{2}-\d{2}/.test(input)) {
-    return input.slice(0, 10)
-  }
-
-  const timestamp = Number(input)
-  if (!Number.isNaN(timestamp)) {
-    const date = new Date(timestamp > 1e12 ? timestamp : timestamp * 1000)
-    if (!Number.isNaN(date.getTime())) {
-      return date.toISOString().slice(0, 10)
-    }
-  }
-
-  return String(input)
-}
-
 function normalizeItem(item: RawThingModel, index: number): ThingModelItem {
-  const rawId = item.id ?? item.model_id ?? index + 1
-  const id = Number(rawId) || index + 1
+  const rawId = item.id ?? item.model_id ?? item.thing_model_id ?? index + 1
+  const id = toNumber(rawId, index + 1)
   const propertyCountRaw =
     item.prop_count ??
     item.property_count ??
@@ -101,30 +94,25 @@ function normalizeItem(item: RawThingModel, index: number): ThingModelItem {
     name: item.name ?? item.model_name ?? `未命名模型-${id}`,
     identifier: item.identifier ?? item.key ?? `model_${id}`,
     description: item.description ?? item.desc ?? '--',
-    propertyCount: Number(propertyCountRaw) || 0,
+    propertyCount: toNumber(propertyCountRaw),
     createdAt: normalizeDate(
-      item.created_at ?? item.create_time ?? item.createdAt ?? item.ctime,
+      item.created_time ?? item.created_at ?? item.create_time ?? item.createdAt ?? item.ctime,
     ),
+    icon: item.icon_svg ?? item.icon,
   }
 }
 
-function extractListPayload(payload: unknown): { list: RawThingModel[]; total: number } {
-  if (Array.isArray(payload)) {
-    return { list: payload as RawThingModel[], total: payload.length }
+function normalizeProp(item: Record<string, unknown>, index: number): ThingModelProperty {
+  return {
+    id: toNumber(item.id ?? index + 1, index + 1),
+    key: String(item.key ?? `prop_${index + 1}`),
+    name: String(item.name ?? `属性-${index + 1}`),
+    type: toNumber(item.type, 1),
+    dataType: toNumber(item.data_type ?? item.dataType, 3),
+    unit: String(item.unit ?? ''),
+    sourceType: toNumber(item.source_type ?? item.sourceType, 1),
+    expression: String(item.expression ?? item.formula ?? item.formula_expr ?? ''),
   }
-
-  if (payload && typeof payload === 'object') {
-    const data = payload as Record<string, unknown>
-    const list =
-      (Array.isArray(data.list) && data.list) ||
-      (Array.isArray(data.items) && data.items) ||
-      (Array.isArray(data.rows) && data.rows) ||
-      []
-    const totalRaw = data.total ?? data.count ?? data.total_count ?? list.length
-    return { list: list as RawThingModel[], total: Number(totalRaw) || list.length }
-  }
-
-  return { list: [], total: 0 }
 }
 
 export async function fetchThingModelList(
@@ -136,22 +124,14 @@ export async function fetchThingModelList(
   })
 
   if (params.keyword) {
-    query.set('keyword', params.keyword)
+    query.set('search', params.keyword)
   }
 
   try {
-    const response = await fetch(`/api/edgelink/thing_model/list?${query.toString()}`)
-    if (!response.ok) {
-      throw new Error(`Request failed: ${response.status}`)
-    }
+    const json = await requestJson(`/api/edgelink/thing_model/list?${query.toString()}`)
+    const payload = extractPayload(json)
 
-    const json = (await response.json()) as Record<string, unknown>
-    const payload =
-      (json.data as Record<string, unknown> | undefined) ??
-      (json.result as Record<string, unknown> | undefined) ??
-      json
-
-    const { list, total } = extractListPayload(payload)
+    const { list, total } = extractListPayload<RawThingModel>(payload)
     const normalizedList = list.map(normalizeItem)
 
     return {
@@ -173,4 +153,137 @@ export async function fetchThingModelList(
     const pagedList = filteredList.slice(start, start + params.pageSize)
     return { list: pagedList, total: filteredList.length }
   }
+}
+
+export async function createThingModel(payload: ThingModelUpsertPayload): Promise<void> {
+  await requestJson('/api/edgelink/thing_model/create', {
+    method: 'POST',
+    body: JSON.stringify({
+      name: payload.name,
+      identifier: payload.identifier,
+      description: payload.description,
+      icon: payload.icon,
+      func_types: payload.funcTypes,
+    }),
+  })
+}
+
+export async function updateThingModel(payload: ThingModelUpsertPayload): Promise<void> {
+  await requestJson('/api/edgelink/thing_model/update', {
+    method: 'POST',
+    body: JSON.stringify({
+      id: payload.id,
+      name: payload.name,
+      identifier: payload.identifier,
+      description: payload.description,
+      icon: payload.icon,
+      func_types: payload.funcTypes,
+    }),
+  })
+}
+
+export async function deleteThingModel(id: number): Promise<void> {
+  await requestJson('/api/edgelink/thing_model/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
+  })
+}
+
+export async function fetchThingModelProps(modelId: number): Promise<ThingModelProperty[]> {
+  const query = new URLSearchParams({ model_id: String(modelId), page_num: '1', page_size: '200' })
+
+  try {
+    const json = await requestJson(`/api/edgelink/thing_model/prop/list?${query.toString()}`)
+    const payload = extractPayload(json)
+    const { list } = extractListPayload<Record<string, unknown>>(payload)
+    return list.map(normalizeProp)
+  } catch {
+    return [
+      {
+        id: 1,
+        key: 'temperature',
+        name: '温度',
+        type: 1,
+        dataType: 3,
+        unit: '℃',
+        sourceType: 1,
+        expression: '',
+      },
+      {
+        id: 2,
+        key: 'humidity',
+        name: '湿度',
+        type: 1,
+        dataType: 3,
+        unit: '%',
+        sourceType: 1,
+        expression: '',
+      },
+    ]
+  }
+}
+
+export async function createThingModelProp(payload: {
+  modelId: number
+  name: string
+  key: string
+  type: number
+  dataType: number
+  unit?: string
+  sourceType?: number
+  expression?: string
+}): Promise<void> {
+  await requestJson('/api/edgelink/thing_model/prop/create', {
+    method: 'POST',
+    body: JSON.stringify({
+      model_id: payload.modelId,
+      name: payload.name,
+      key: payload.key,
+      type: payload.type,
+      data_type: payload.dataType,
+      unit: payload.unit,
+      source_type: payload.sourceType,
+      expression: payload.expression,
+    }),
+  })
+}
+
+export async function updateThingModelProp(payload: {
+  id: number
+  modelId: number
+  name: string
+  key: string
+  type: number
+  dataType: number
+  unit?: string
+  sourceType?: number
+  expression?: string
+}): Promise<void> {
+  await requestJson('/api/edgelink/thing_model/prop/update', {
+    method: 'POST',
+    body: JSON.stringify({
+      id: payload.id,
+      model_id: payload.modelId,
+      name: payload.name,
+      key: payload.key,
+      type: payload.type,
+      data_type: payload.dataType,
+      unit: payload.unit,
+      source_type: payload.sourceType,
+      expression: payload.expression,
+    }),
+  })
+}
+
+export async function deleteThingModelProp(id: number): Promise<void> {
+  await requestJson('/api/edgelink/thing_model/prop/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
+  })
+}
+
+export async function fetchThingModelDetail(modelId: number): Promise<ThingModelItem> {
+  const json = await requestJson(`/api/edgelink/thing_model/${modelId}`)
+  const payload = extractPayload<RawThingModel>(json)
+  return normalizeItem(payload, 0)
 }
