@@ -1,5 +1,14 @@
 type AnyRecord = Record<string, unknown>
 
+const API_BASE = import.meta.env.VITE_API_BASE?.replace(/\/$/, '') ?? ''
+
+function buildRequestUrl(url: string): string {
+  if (!API_BASE || /^https?:\/\//i.test(url)) {
+    return url
+  }
+  return url.startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`
+}
+
 export function isRecord(value: unknown): value is AnyRecord {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
 }
@@ -82,7 +91,8 @@ export function extractListPayload<T>(payload: unknown): { list: T[]; total: num
 }
 
 export async function requestJson(url: string, init?: RequestInit): Promise<unknown> {
-  const response = await fetch(url, {
+  const requestUrl = buildRequestUrl(url)
+  const response = await fetch(requestUrl, {
     headers: {
       'Content-Type': 'application/json',
       ...(init?.headers ?? {}),
