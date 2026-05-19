@@ -38,54 +38,6 @@ function normalizeDateTime(input: unknown): string {
   return String(input)
 }
 
-const FALLBACK_DEVICE_DETAIL: DeviceDetail = {
-  id: 1,
-  key: 'dev_warehouse_th_001',
-  name: '仓储温湿度-A01',
-  productId: 101,
-  productName: '温湿度传感器',
-  description: '仓储区温湿度一体传感器',
-  createdAt: '2024-01-12',
-  updatedAt: '2024-06-01',
-  status: 'online',
-  uplink: [
-    {
-      desc: '上传设备数据至MQTT',
-      address: '/sys/TH-Sensor/esp32c3-dht11-001/uplink/data',
-    },
-  ],
-  downlink: [
-    {
-      desc: '下发事件至设备',
-      address: '/sys/TH-Sensor/esp32c3-dht11-001/downlink/event',
-    },
-  ],
-  properties: [
-    {
-      id: 1,
-      propertyId: 1,
-      key: 'temperature',
-      name: '温度',
-      dataType: 3,
-      unit: '℃',
-      value: 25.6,
-      persistent: true,
-      storeMode: 'minute',
-    },
-    {
-      id: 2,
-      propertyId: 2,
-      key: 'humidity',
-      name: '湿度',
-      dataType: 3,
-      unit: '%',
-      value: 60.2,
-      persistent: true,
-      storeMode: 'minute',
-    },
-  ],
-}
-
 function normalizeStatus(value: unknown): DeviceItem['status'] {
   const text = String(value ?? '').toLowerCase()
   if (text === 'online' || text.includes('on') || text === '1') {
@@ -136,6 +88,7 @@ function normalizeDetail(raw: RawDevice): DeviceDetail {
       dataType: toNumber(itemProp.data_type ?? itemProp.dataType, 3),
       unit: String(itemProp.unit ?? ''),
       value: (itemProp.value ?? '--') as string | number | boolean,
+      updatedAt: normalizeDateTime(raw.status_updated_time),
       persistent: Boolean(itemProp.persistent ?? true),
       storeMode: String(itemProp.store_mode ?? itemProp.storeMode ?? 'minute'),
     }
@@ -169,30 +122,19 @@ export async function fetchDeviceList(params: DeviceListParams): Promise<{ list:
     query.set('search', params.keyword)
   }
 
-  try {
-    const json = await requestJson(`/api/edgelink/device/list?${query.toString()}`)
-    const payload = extractPayload(json)
-    const { list, total } = extractListPayload<RawDevice>(payload)
-    return {
-      list: list.map(normalizeDevice),
-      total,
-    }
-  } catch {
-    return {
-      list: [FALLBACK_DEVICE_DETAIL],
-      total: 1,
-    }
+  const json = await requestJson(`/api/edgelink/device/list?${query.toString()}`)
+  const payload = extractPayload(json)
+  const { list, total } = extractListPayload<RawDevice>(payload)
+  return {
+    list: list.map(normalizeDevice),
+    total,
   }
 }
 
 export async function fetchDeviceDetail(id: number): Promise<DeviceDetail> {
-  try {
-    const json = await requestJson(`/api/edgelink/device/${id}`)
-    const payload = extractPayload<RawDevice>(json)
-    return normalizeDetail(payload)
-  } catch {
-    return FALLBACK_DEVICE_DETAIL
-  }
+  const json = await requestJson(`/api/edgelink/device/${id}`)
+  const payload = extractPayload<RawDevice>(json)
+  return normalizeDetail(payload)
 }
 
 export async function createDevice(payload: DeviceUpsertPayload): Promise<void> {
@@ -328,13 +270,6 @@ export async function fetchDeviceTimeseriesBatch(
       [uniquePropertyIds[0]]: fallbackList,
     }
   } catch {
-    const fallback: Record<number, DeviceTimeseriesPoint[]> = {}
-    uniquePropertyIds.forEach((id, offset) => {
-      fallback[id] = Array.from({ length: 12 }, (_, index) => ({
-        timestamp: end - index * 300,
-        value: Number((25 + Math.sin(index + offset) * 2).toFixed(1)),
-      }))
-    })
-    return fallback
+    return Object.fromEntries(uniquePropertyIds.map((id) => [id, []]))
   }
 }

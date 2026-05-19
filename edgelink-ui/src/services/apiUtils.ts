@@ -91,6 +91,12 @@ export async function requestJson(url: string, init?: RequestInit): Promise<unkn
   })
 
   if (!response.ok) {
+    if (response.status === 401 && !url.includes('/oauth/')) {
+      window.localStorage.removeItem('edgelink.oauth.token')
+      window.localStorage.removeItem('edgelink.oauth.user')
+      const redirect = encodeURIComponent(`${window.location.pathname}${window.location.search}${window.location.hash}`)
+      window.location.assign(`/login?redirect=${redirect}`)
+    }
     throw new Error(`Request failed: ${response.status}`)
   }
 

@@ -13,6 +13,7 @@ export type DeviceProperty = {
   dataType: number
   unit: string
   value: number | string | boolean
+  updatedAt: string
   persistent: boolean
   storeMode: string
 }

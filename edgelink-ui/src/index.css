@@ -96,6 +96,7 @@ body {
 .user-block {
   border-left: 1px solid var(--border-color);
   padding-left: 12px;
+  cursor: pointer;
 }
 
 .user-avatar {
@@ -356,10 +357,16 @@ body {
 }
 
 .thing-action-btn:hover,
-.thing-action-btn:focus {
+.thing-action-btn:focus-visible {
   border-color: #2563eb !important;
   color: #2563eb !important;
   background: #eff4ff !important;
+}
+
+.thing-action-btn:focus:not(:focus-visible):not(:hover) {
+  border-color: #e4e9f4 !important;
+  color: #4b5675 !important;
+  background: #ffffff !important;
 }
 
 .thing-action-btn-danger {
@@ -369,10 +376,16 @@ body {
 }
 
 .thing-action-btn-danger:hover,
-.thing-action-btn-danger:focus {
+.thing-action-btn-danger:focus-visible {
   color: #dc2626 !important;
   border-color: #dc2626 !important;
   background: #fee2e2 !important;
+}
+
+.thing-action-btn-danger:focus:not(:focus-visible):not(:hover) {
+  color: #dc2626 !important;
+  border-color: #dc2626 !important;
+  background: #fef2f2 !important;
 }
 
 .thing-table-footer {
@@ -492,7 +505,7 @@ body {
   padding: 18px;
   background: #f8f9fc;
   border-radius: 12px;
-  margin: 12px 16px 0;
+  margin: 12px 16px;
 }
 
 .device-detail-left {
@@ -596,6 +609,10 @@ body {
   border-radius: 12px;
   padding: 18px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+}
+
+.device-properties-section + .device-address-section {
+  margin-top: 16px;
 }
 
 .address-grid {
@@ -836,6 +853,7 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  gap: 12px;
   margin-bottom: 12px;
 }
 
@@ -855,6 +873,18 @@ body {
   font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
   font-size: 11px;
   color: #9aa5be;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.property-header-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  min-width: 0;
 }
 
 .property-type-tag {
@@ -891,11 +921,33 @@ body {
   line-height: 1;
 }
 
+.property-value-btn {
+  display: inline-flex;
+  align-items: baseline;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.property-value-btn:hover {
+  color: #2563eb;
+}
+
 .property-unit {
   font-size: 13px;
   font-weight: 500;
   color: #9aa5be;
   vertical-align: middle;
+}
+
+.property-update-time {
+  margin-top: 8px;
+  color: #7d8aa3;
+  font-size: 11px;
+  line-height: 1.4;
 }
 
 .property-meta {
@@ -1596,6 +1648,172 @@ body {
   gap: 8px;
 }
 
+.login-page {
+  min-height: 100vh;
+  padding: 48px;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(47, 109, 246, 0.2), transparent 28%),
+    radial-gradient(circle at 82% 12%, rgba(22, 163, 184, 0.16), transparent 30%),
+    linear-gradient(135deg, #f8fbff 0%, #eef3fb 100%);
+  display: grid;
+  grid-template-columns: minmax(320px, 520px);
+  justify-content: center;
+  align-items: center;
+}
+
+.login-hero {
+  min-height: 560px;
+  padding: 42px;
+  border: 1px solid rgba(228, 232, 239, 0.9);
+  border-radius: 28px;
+  background:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.58)),
+    linear-gradient(135deg, rgba(47, 109, 246, 0.08), rgba(22, 163, 184, 0.06));
+  box-shadow: 0 24px 80px rgba(31, 42, 68, 0.12);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  position: relative;
+}
+
+.login-hero::after {
+  content: '';
+  position: absolute;
+  right: -120px;
+  bottom: -120px;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  border: 58px solid rgba(47, 109, 246, 0.08);
+}
+
+.login-brand-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.login-brand-icon {
+  box-shadow: 0 12px 28px rgba(47, 109, 246, 0.28);
+}
+
+.login-hero-copy {
+  max-width: 620px;
+  position: relative;
+  z-index: 1;
+}
+
+.login-hero-copy .ant-typography h1,
+.login-hero-copy.ant-typography h1,
+.login-hero-copy .ant-typography {
+  color: var(--text-main);
+}
+
+.login-hero-copy h1.ant-typography {
+  margin-bottom: 18px;
+  font-size: 56px;
+  line-height: 1.08;
+  letter-spacing: -1px;
+}
+
+.login-hero-copy .ant-typography {
+  max-width: 540px;
+  color: #667799;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.login-card {
+  padding: 46px;
+  border: 1px solid #e4e8ef;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 24px 70px rgba(31, 42, 68, 0.14);
+}
+
+.login-card-brand {
+  margin-bottom: 34px;
+}
+
+.login-card-brand .brand-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  font-size: 26px;
+}
+
+.login-card-brand .brand-title {
+  font-size: 38px;
+  line-height: 1;
+}
+
+.login-card-brand .brand-subtitle {
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.login-card-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  color: #fff;
+  background: linear-gradient(160deg, #5391ff 0%, #2f6df6 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 14px 30px rgba(47, 109, 246, 0.26);
+}
+
+.login-card h2.ant-typography {
+  margin: 22px 0 8px;
+  color: var(--text-main);
+  font-size: 28px;
+}
+
+.login-card-desc.ant-typography {
+  margin-bottom: 14px;
+  color: #667799;
+  line-height: 1.7;
+}
+
+.login-card-auth-desc.ant-typography {
+  margin-bottom: 28px;
+  color: #8a96ad;
+}
+
+.login-alert {
+  margin-bottom: 18px;
+  border-radius: 12px;
+}
+
+.login-submit-btn {
+  height: 48px;
+  border-radius: 14px;
+  font-weight: 700;
+  box-shadow: 0 14px 28px rgba(47, 109, 246, 0.24);
+}
+
+.oauth-callback-page {
+  grid-template-columns: minmax(320px, 460px);
+}
+
+.oauth-callback-card {
+  text-align: center;
+}
+
+.oauth-callback-link {
+  margin-top: 18px;
+  border: 0;
+  background: transparent;
+  color: var(--brand-blue);
+  font-weight: 600;
+  cursor: pointer;
+}
+
 @media (max-width: 900px) {
   .console-header {
     padding: 0 12px;
@@ -1693,5 +1911,23 @@ body {
 
   .page-placeholder p {
     font-size: 16px;
+  }
+
+  .login-page {
+    padding: 18px;
+    grid-template-columns: 1fr;
+  }
+
+  .login-hero {
+    min-height: 320px;
+    padding: 26px;
+  }
+
+  .login-hero-copy h1.ant-typography {
+    font-size: 36px;
+  }
+
+  .login-card {
+    padding: 30px;
   }
 }

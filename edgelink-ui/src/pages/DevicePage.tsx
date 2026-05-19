@@ -70,17 +70,18 @@ type HistorySeries = {
   propertyId: number
   key: string
   name: string
-  rows: Array<{ timestamp: number; value: string | number | boolean }>
+  rows: Array<{ timestamp: number; value: string | number | boolean | null }>
 }
 
 type HistoryTableRow = {
   rowKey: string
   timestamp: number
-  [key: string]: string | number | boolean
+  [key: string]: string | number | boolean | null
 }
 
 const HISTORY_RANGE_SECONDS: Record<string, number> = {
   '1h': 60 * 60,
+  '2h': 2 * 60 * 60,
   '6h': 6 * 60 * 60,
   '12h': 12 * 60 * 60,
   '24h': 24 * 60 * 60,
@@ -123,7 +124,10 @@ function getStoreModeText(mode: string): string {
   return map[mode] ?? mode
 }
 
-function toNumericValue(value: string | number | boolean): number | undefined {
+function toNumericValue(value: string | number | boolean | null): number | undefined {
+  if (value === null) {
+    return undefined
+  }
   if (typeof value === 'number') {
     return value
   }
@@ -132,6 +136,31 @@ function toNumericValue(value: string | number | boolean): number | undefined {
   }
   const parsed = Number(value)
   return Number.isNaN(parsed) ? undefined : parsed
+}
+
+function fillHistorySeriesBlanks(series: HistorySeries[], startAt: Dayjs, endAt: Dayjs): HistorySeries[] {
+  const timestamps = Array.from(
+    new Set([
+      startAt.unix(),
+      endAt.unix(),
+      ...series.flatMap((seriesItem) => seriesItem.rows.map((point) => point.timestamp)),
+    ]),
+  ).sort((a, b) => a - b)
+
+  if (timestamps.length === 0) {
+    return series
+  }
+
+  return series.map((seriesItem) => {
+    const pointMap = new Map(seriesItem.rows.map((point) => [point.timestamp, point.value]))
+    return {
+      ...seriesItem,
+      rows: timestamps.map((timestamp) => ({
+        timestamp,
+        value: pointMap.has(timestamp) ? pointMap.get(timestamp)! : null,
+      })),
+    }
+  })
 }
 
 const hourOnlyDisabledTime = () => ({
@@ -174,8 +203,8 @@ export function DevicePage() {
   const [detailLoading, setDetailLoading] = useState(false)
   const [historyOpen, setHistoryOpen] = useState(false)
   const [historyTitle, setHistoryTitle] = useState('属性历史数据')
-  const [historyRange, setHistoryRange] = useState('24h')
-  const [historyStartAt, setHistoryStartAt] = useState<Dayjs | null>(dayjs().subtract(24, 'hour').startOf('hour'))
+  const [historyRange, setHistoryRange] = useState('2h')
+  const [historyStartAt, setHistoryStartAt] = useState<Dayjs | null>(dayjs().subtract(2, 'hour').startOf('hour'))
   const [historyEndAt, setHistoryEndAt] = useState<Dayjs | null>(dayjs())
   const [historyProperty, setHistoryProperty] = useState<HistoryPropertyRef>()
   const [historyCompareOpen, setHistoryCompareOpen] = useState(false)
@@ -333,10 +362,12 @@ export function DevicePage() {
     try {
       const result = await fetchDeviceDetail(record.id)
       setDetail(result)
+    } catch (error) {
+      message.error((error as Error).message)
     } finally {
       setDetailLoading(false)
     }
-  }, [])
+  }, [message])
 
   const columns = useMemo<ColumnsType<DeviceItem>>(
     () => [
@@ -446,12 +477,12 @@ export function DevicePage() {
         .filter((item) => propertyIds.includes(item.propertyId))
         .map((item) => ({ id: item.propertyId, key: item.key, name: item.name }))
 
-      return refs.map((ref) => ({
+      return fillHistorySeriesBlanks(refs.map((ref) => ({
         propertyId: ref.id,
         key: ref.key,
         name: ref.name,
         rows: seriesMap[ref.id] ?? [],
-      }))
+      })), effectiveStart, effectiveEnd)
     },
     [detail],
   )
@@ -463,10 +494,10 @@ export function DevicePage() {
       }
 
       const defaultEndAt = dayjs()
-      const defaultStartAt = defaultEndAt.subtract(24, 'hour').startOf('hour')
+      const defaultStartAt = defaultEndAt.subtract(2, 'hour').startOf('hour')
       setHistoryOpen(true)
       setHistoryTitle(`${property.name} - 历史数据`)
-      setHistoryRange('24h')
+      setHistoryRange('2h')
       setHistoryStartAt(defaultStartAt)
       setHistoryEndAt(defaultEndAt)
       setHistoryViewMode('chart')
@@ -477,16 +508,7 @@ export function DevicePage() {
 
       setHistoryLoading(true)
       try {
-        let rows = (await fetchHistorySeriesByIds([propertyRef.id], '24h', defaultStartAt, defaultEndAt))[0]?.rows ?? []
-
-        if (rows.length === 0) {
-          const fallbackStart = defaultEndAt.subtract(7, 'day').startOf('hour')
-          rows = (await fetchHistorySeriesByIds([propertyRef.id], '7d', fallbackStart, defaultEndAt))[0]?.rows ?? []
-          if (rows.length > 0) {
-            setHistoryRange('7d')
-            setHistoryStartAt(fallbackStart)
-          }
-        }
+        const rows = (await fetchHistorySeriesByIds([propertyRef.id], '2h', defaultStartAt, defaultEndAt))[0]?.rows ?? []
 
         setHistorySeries([
           {
@@ -572,7 +594,7 @@ export function DevicePage() {
         title: series.name,
         dataIndex: `prop_${series.propertyId}`,
         key: `prop_${series.propertyId}`,
-        render: (value: string | number | boolean | undefined) => value ?? '--',
+        render: (value: string | number | boolean | null | undefined) => value ?? '--',
       })),
     ],
     [historySeries],
@@ -613,12 +635,10 @@ export function DevicePage() {
         const points = seriesItem.rows
           .map((item) => {
             const value = toNumericValue(item.value)
-            if (value === undefined) {
-              return undefined
-            }
-            return [item.timestamp * 1000, value] as [number, number]
+            return [item.timestamp * 1000, value ?? null] as [number, number | null]
           })
-          .filter((item): item is [number, number] => Boolean(item))
+          .filter((item): item is [number, number | null] => Boolean(item))
+        const hasValue = points.some((item) => item[1] !== null)
 
         return {
           name: seriesItem.name,
@@ -626,6 +646,7 @@ export function DevicePage() {
           smooth: true,
           showSymbol: false,
           data: points,
+          hasValue,
           lineStyle: { color: palette[index % palette.length], width: 2.2 },
           areaStyle:
             index === 0
@@ -638,7 +659,9 @@ export function DevicePage() {
               : undefined,
         }
       })
-      .filter((item) => item.data.length > 0)
+      .filter((item) => item.hasValue)
+    const xAxisMin = (historyStartAt ?? dayjs().subtract(HISTORY_RANGE_SECONDS[historyRange] ?? HISTORY_RANGE_SECONDS['2h'], 'second')).valueOf()
+    const xAxisMax = (historyEndAt ?? dayjs()).valueOf()
 
     chart.setOption({
       animationDuration: 450,
@@ -648,7 +671,7 @@ export function DevicePage() {
         backgroundColor: '#0f172a',
         borderWidth: 0,
         textStyle: { color: '#fff' },
-        formatter: (params: Array<{ data: [number, number]; seriesName: string; marker: string }>) => {
+        formatter: (params: Array<{ data: [number, number | null]; seriesName: string; marker: string }>) => {
           const first = params[0]
           if (!first) {
             return '--'
@@ -656,12 +679,14 @@ export function DevicePage() {
           const time = new Date(first.data[0]).toLocaleString()
           const lines = params
             .filter((item) => Array.isArray(item.data) && item.data.length >= 2)
-            .map((item) => `${item.marker}${item.seriesName}: ${item.data[1]}`)
+            .map((item) => `${item.marker}${item.seriesName}: ${item.data[1] ?? '--'}`)
           return [time, ...lines].join('<br/>')
         },
       },
       xAxis: {
         type: 'time',
+        min: xAxisMin,
+        max: xAxisMax,
         axisLine: { lineStyle: { color: '#dbe3f2' } },
         axisLabel: { color: '#8ea0c0', fontSize: 11 },
       },
@@ -700,7 +725,7 @@ export function DevicePage() {
       window.cancelAnimationFrame(raf)
       window.clearTimeout(timer)
     }
-  }, [historyModalReady, historyOpen, historySeries, historyViewMode])
+  }, [historyEndAt, historyModalReady, historyOpen, historyRange, historySeries, historyStartAt, historyViewMode])
 
   useEffect(() => {
     if (historyViewMode === 'chart') {
@@ -749,7 +774,7 @@ export function DevicePage() {
                   {getStatusTag(detail.status)}
                   <div className="device-meta-right">
                     <span className="device-meta-text">
-                      最近更新时间：<b>{detail.updatedAt || '-'}</b>
+                      最近在线时间：<b>{detail.updatedAt || '-'}</b>
                     </span>
                     <span className="device-meta-text">
                       所属产品：<b>{detail.productName || '-'}</b>
@@ -759,6 +784,47 @@ export function DevicePage() {
                 <div className="device-desc">{detail.description || '--'}</div>
                 {detailLoading ? <div className="cell-sub-text">详情加载中...</div> : null}
               </div>
+            </div>
+          </div>
+
+          <div className="device-properties-section">
+            <div className="section-header">
+              <span className="section-title">设备属性</span>
+              <span className="section-count">共 {detail.properties.length} 项</span>
+            </div>
+            <div className="properties-grid">
+              {detail.properties.map((property) => {
+                const dtype = property.dataType === 1 ? 'bool' : property.dataType === 2 ? 'int' : 'float'
+                return (
+                  <div className={`property-card type-${dtype}`} key={property.id}>
+                    <div className="property-header">
+                      <div className="property-info">
+                        <div className="property-name">{property.name}</div>
+                      </div>
+                      <div className="property-header-tags">
+                        <div className="property-key">{property.key}</div>
+                        <span className={`property-type-tag ptype-${dtype}`}>{dtype}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="property-value property-value-btn"
+                      onClick={() => void loadPropertyHistory(property)}
+                    >
+                      {renderPropertyValue(property)}
+                      <span className="property-unit">{property.unit ? ` ${property.unit}` : ''}</span>
+                    </button>
+
+                    <div className="property-update-time">数据更新时间：{property.updatedAt || '--'}</div>
+
+                    <div className="property-meta">
+                      <div className="property-meta-item">{getStoreModeText(property.storeMode)}</div>
+                      <div className="property-meta-item">{property.persistent ? '存历史' : '不存历史'}</div>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
 
@@ -795,48 +861,6 @@ export function DevicePage() {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-
-        <div className="device-properties-section">
-          <div className="section-header">
-            <span className="section-title">设备属性</span>
-            <span className="section-count">共 {detail.properties.length} 项</span>
-          </div>
-          <div className="properties-grid">
-            {detail.properties.map((property) => {
-              const dtype = property.dataType === 1 ? 'bool' : property.dataType === 2 ? 'int' : 'float'
-              return (
-                <div className={`property-card type-${dtype}`} key={property.id}>
-                  <div className="property-header">
-                    <div className="property-info">
-                      <div className="property-name">{property.name}</div>
-                      <div className="property-key">{property.key}</div>
-                    </div>
-                    <span className={`property-type-tag ptype-${dtype}`}>{dtype}</span>
-                  </div>
-
-                  <div className="property-value">
-                    {renderPropertyValue(property)}
-                    <span className="property-unit">{property.unit ? ` ${property.unit}` : ''}</span>
-                  </div>
-
-                  <div className="property-meta">
-                    <div className="property-meta-item">{getStoreModeText(property.storeMode)}</div>
-                    <div className="property-meta-item">{property.persistent ? '存历史' : '不存历史'}</div>
-                  </div>
-
-                  <div className="property-actions">
-                    <button type="button" className="property-btn primary" onClick={() => void loadPropertyHistory(property)}>
-                      查看历史
-                    </button>
-                    <button type="button" className="property-btn" onClick={() => void refreshHistory()}>
-                      刷新
-                    </button>
-                  </div>
-                </div>
-              )
-            })}
           </div>
         </div>
 
@@ -882,8 +906,9 @@ export function DevicePage() {
                   }}
                   style={{ minWidth: 180 }}
                   options={[
-                    { value: '1h', label: '最近 1 小时' },
-                    { value: '6h', label: '最近 6 小时' },
+                      { value: '1h', label: '最近 1 小时' },
+                      { value: '2h', label: '最近 2 小时' },
+                      { value: '6h', label: '最近 6 小时' },
                     { value: '12h', label: '最近 12 小时' },
                     { value: '24h', label: '最近 24 小时' },
                     { value: '3d', label: '最近 3 天' },

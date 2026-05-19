@@ -1,20 +1,25 @@
 import {
   BellOutlined,
   DownOutlined,
+  LogoutOutlined,
   SettingOutlined,
   StarOutlined,
 } from '@ant-design/icons'
-import { Avatar, Badge, Button, Layout, Menu, Space, Typography } from 'antd'
+import { Avatar, Badge, Button, Dropdown, Layout, Menu, Space, Typography } from 'antd'
 import type { MenuProps } from 'antd'
 import { useMemo } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router'
 import { menuRoutes } from '../router/menu'
+import { clearAuth, getStoredUser } from '../services/authService'
 
 const { Header, Sider, Content } = Layout
 
 export function ConsoleLayout() {
   const location = useLocation()
   const navigate = useNavigate()
+  const user = getStoredUser()
+  const displayName = user?.displayName || user?.username || '用户'
+  const avatarText = displayName.slice(0, 2).toUpperCase()
 
   const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
     const target = menuRoutes.find((item) => item.key === key)
@@ -27,6 +32,11 @@ export function ConsoleLayout() {
     const matched = menuRoutes.find((item) => item.path === location.pathname)
     return matched?.key ?? 'workbench'
   }, [location.pathname])
+
+  const handleLogout = () => {
+    clearAuth()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <Layout className="console-shell">
@@ -48,13 +58,24 @@ export function ConsoleLayout() {
             <Button type="text" className="action-btn" icon={<BellOutlined />} />
           </Badge>
           <Button type="text" className="action-btn" icon={<SettingOutlined />} />
-          <Space size={8} className="user-block">
-            <Avatar size={32} className="user-avatar">
-              AD
-            </Avatar>
-            <Typography.Text className="user-name">管理员</Typography.Text>
-            <DownOutlined className="user-arrow" />
-          </Space>
+          <Dropdown
+            menu={{
+              items: [{ key: 'logout', icon: <LogoutOutlined />, label: '退出登录' }],
+              onClick: ({ key }) => {
+                if (key === 'logout') {
+                  handleLogout()
+                }
+              },
+            }}
+          >
+            <Space size={8} className="user-block">
+              <Avatar size={32} className="user-avatar">
+                {avatarText}
+              </Avatar>
+              <Typography.Text className="user-name">{displayName}</Typography.Text>
+              <DownOutlined className="user-arrow" />
+            </Space>
+          </Dropdown>
         </Space>
       </Header>
 
